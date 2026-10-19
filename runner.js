@@ -398,7 +398,7 @@ function acceptJob(id, btn) {
     UI.trackJob = fresh.id;
     KD.toast("Request accepted — head to pickup", "i-check-c");
     renderAll();
-    KD.go("r-tracking");
+    KD.go("r-active");
   }, 520);
 }
 
@@ -430,7 +430,6 @@ function openDeliverConfirm(j) {
     '<div class="hint" id="r-pin-hint">Enter the 4-digit PIN.</div>' +
     '<p class="smallnote" style="text-align:left">Demo build: any 4-digit PIN is accepted because PIN verification has no production server yet.</p>' +
     '<div class="breakdown"><div class="brow"><span>Delivery fee</span><span>' + money(j.fee) + "</span></div>" +
-    '<div class="brow"><span>Customer tip</span><span>' + money(j.tip || 0) + "</span></div>" +
     '<div class="brow total"><span>Tip earned by you</span><span>' + money(j.tip || 0) + "</span></div></div>" +
     '<div class="sheetactions"><button class="r-btn-yellow" data-r-act="confirm-deliver" data-id="' + esc(j.id) + '"><svg width="18" height="18"><use href="#i-check-c"/></svg>Confirm delivered</button>' +
     '<button class="r-btn-ghost" data-r-act="close-sheet">Not yet</button></div>'
@@ -499,10 +498,7 @@ function routeHTML(j) {
 }
 
 function chipsHTML(j) {
-  return '<div class="r-jmeta">' +
-    '<span class="r-chip"><svg width="13" height="13"><use href="#i-tag"/></svg>' + esc(j.window) + "</span>" +
-    (j.tip ? '<span class="r-chip" style="color:var(--ok)"><svg width="13" height="13" style="color:var(--ok)"><use href="#i-cash"/></svg>' + money(j.tip) + " tip</span>" : "") +
-    "</div>";
+  return '<div class="r-jmeta"><span class="r-chip"><svg width="13" height="13"><use href="#i-clock"/></svg>' + esc(j.window) + "</span></div>";
 }
 
 function acceptButtonHTML(j) {
@@ -511,14 +507,18 @@ function acceptButtonHTML(j) {
   return '<button class="r-acceptbtn" data-r-accept="' + esc(j.id) + '"' + (disabled ? " disabled" : "") + ">" + (busy ? '<span class="r-spin"></span>Accepting…' : "Accept") + "</button>";
 }
 
-function jobCardHTML(j, compact) {
+function jobCardHTML(j) {
   const catName = (KD.CATS[j.cat] || {}).name || "Request";
-  const pill = j.linked ? '<span class="r-pill r-st-yellow">Your request</span>' : compact ? '<span class="r-pill r-st-available">New</span>' : '<span class="r-pill r-st-available">Available</span>';
   return '<article class="r-jobcard" data-r-job="' + esc(j.id) + '">' +
     '<div class="r-jtop">' + catTile(j.cat) +
-    '<div class="r-jmain"><h3>' + esc(j.title) + '</h3><div class="r-jid">' + esc(j.id) + " · " + esc(catName) + " · " + esc(j.window) + "</div></div>" + pill + "</div>" +
+    '<div class="r-jmain"><h3>' + esc(j.title) + '</h3><div class="r-jid">' + esc(j.id) + " · " + esc(catName) + "</div></div>" +
+    (j.linked ? '<span class="r-pill r-st-yellow">Your request</span>' :
+      '<div class="r-fee"><b>' + money(j.fee) + "</b><small>" + (j.tip ? "+" + money(j.tip) + " tip" : "delivery fee") + "</small></div>") +
+    "</div>" +
     '<div class="r-jdrop"><svg width="15" height="15"><use href="#i-pin"/></svg><span>' + esc(j.dropoff) + "</span></div>" +
-    '<div class="r-jfoot"><div class="r-fee"><b>' + money(j.fee) + "</b><small>" + (j.tip ? "fee + " + money(j.tip) + " tip" : "delivery fee") + "</small></div>" + acceptButtonHTML(j) + "</div></article>";
+    '<div class="r-jmeta"><span class="r-chip"><svg width="13" height="13"><use href="#i-clock"/></svg>' + esc(j.window) + "</span>" +
+    (j.distance ? '<span class="r-chip"><svg width="13" height="13"><use href="#i-route"/></svg>' + esc(String(j.distance)) + " km · ~" + esc(String(j.eta)) + " min</span>" : "") + "</div>" +
+    '<div class="r-jfoot"><button class="r-acceptbtn" type="button" data-r-job="' + esc(j.id) + '">View &amp; accept</button></div></article>';
 }
 
 function stepHTML(j) {
@@ -541,39 +541,39 @@ function renderDashboard() {
   const g = $("#r-greet");
   if (g) g.textContent = greet + ", " + who.first;
   const gs = $("#r-greet-sub");
-  if (gs) gs.textContent = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) + " · Ateneo de Naga University";
+  if (gs) gs.textContent = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   const avatar = $("#r-top-profile");
   if (avatar) avatar.textContent = who.initials;
-  const mode = $("#scr-r-dash .r-modechip");
-  if (mode) mode.classList.toggle("offline", !DB.online);
-  const doneToday = DB.jobs.filter((j) => j.status === "delivered" && j.deliveredAt >= startOfDay(0)).length;
+  const doneToday = DB.jobs.filter((j) => j.status === "delivered" && j.deliveredAt >= startOfDay(0));
+  const tipsToday = doneToday.reduce((s, j) => s + (j.tip || 0), 0);
   const hero = $("#r-dash-hero");
   if (hero) {
     hero.innerHTML = '<div class="r-online-card ' + (DB.online ? "" : "offline") + '">' +
-      '<div class="r-oc-top"><span style="font-size:11.5px;font-weight:800;opacity:.7">' + doneToday + " done today</span></div>" +
+      '<span class="r-statepill"><i></i>' + (DB.online ? "Online" : "Offline") + "</span>" +
       "<h2>" + (DB.online ? "You are online" : "You are offline") + "</h2>" +
-      '<p class="r-ocsub">' + (DB.online ? "Requests near the ADNU campus are showing up. Accept one when you are ready." : "Go online to receive new delivery requests.") + "</p>" +
+      '<p class="r-ocsub">' + (DB.online ? "New campus requests are waiting in Available." : "Go online to receive new delivery requests.") + "</p>" +
+      '<div class="r-oc-stats"><div class="r-ostat"><b>' + doneToday.length + "</b><small>Done today</small></div>" +
+      '<div class="r-ostat"><b>' + money(tipsToday) + "</b><small>Tips today</small></div></div>" +
       '<div class="r-oc-actions"><button class="r-oc-toggle ' + (DB.online ? "" : "go-online") + '" data-r-online="toggle">' + (DB.online ? "Go offline" : "Go online") + "</button></div></div>";
   }
   const active = activeJob();
   const ah = $("#r-dash-active");
   if (ah) {
     if (!active) {
-      ah.innerHTML = '<div class="r-wallet"><div class="r-wtop"><h3>No active delivery</h3></div><p>Accept a nearby request to start a run. Your delivery status and customer chat appear here.</p><button class="r-btn-soft" style="width:100%;margin-top:12px" data-r-go="r-available"><svg width="17" height="17"><use href="#i-box"/></svg>Browse requests</button></div>';
+      ah.innerHTML = "";
     } else {
       const meta = statusOf(active);
-      ah.innerHTML = '<div class="r-activecard">' +
-        '<div class="r-ac-top"><span class="r-pill ' + meta.pill + '">' + meta.label + '</span><span style="font-size:11.5px;font-weight:800;opacity:.7">' + esc(active.id) + "</span></div>" +
-        "<h2>" + esc(active.title) + '</h2><div class="r-acid">' + esc(active.customer) + " · " + esc(active.dropoff) + "</div>" +
-        '<div class="r-progress"><div class="r-ptrack"><div class="r-pfill" style="width:' + meta.progress + '%"></div></div><div class="r-plabels" style="justify-content:flex-end"><span>' + esc(active.window) + "</span></div></div></div>" +
-        '<div class="r-act-actions"><button class="r-btn-primary" data-r-resume="' + esc(active.id) + '"><svg width="18" height="18"><use href="#i-run"/></svg>Open active delivery</button></div>';
+      ah.innerHTML = '<button class="r-earnrow" type="button" data-r-go="r-active">' +
+        '<span class="r-qic q-info"><svg width="21" height="21"><use href="#i-run"/></svg></span>' +
+        '<span class="r-ermain"><b>' + esc(active.title) + '</b><small>' + esc(active.customer) + " · " + esc(active.id) + "</small></span>" +
+        '<span class="r-pill ' + meta.pill + '">' + meta.label + "</span>" +
+        '<svg class="r-erchev" width="16" height="16"><use href="#i-chev-r"/></svg></button>';
     }
   }
-  const near = $("#r-dash-jobs");
-  if (near) {
-    const list = availableJobs().sort((a, b) => b.createdAt - a.createdAt).slice(0, 2);
-    near.innerHTML = list.length ? list.map((j) => jobCardHTML(j, true)).join("") :
-      '<div class="r-empty"><div class="resi"><svg width="34" height="34"><use href="#i-box"/></svg></div><h3>No requests nearby</h3><p>New runs appear here as soon as customers post them.</p></div>';
+  const nSub = $("#r-dash-nearby-sub");
+  if (nSub) {
+    const n = availableJobs().length;
+    nSub.textContent = n ? n + " request" + (n === 1 ? "" : "s") + " near ADNU" : "No requests nearby right now";
   }
   updateBadges();
 }
@@ -589,10 +589,9 @@ function sortLabel() {
   return { newest: "Newest", oldest: "Oldest", fee: "Highest fee" }[UI.sort] || "Newest";
 }
 function renderAvailable() {
+  const avail = availableJobs();
   const count = $("#r-avail-count");
-  if (count) count.textContent = availableJobs().length + " request" + (availableJobs().length === 1 ? "" : "s") + " near you";
-  const chip = $("#r-avail-status");
-  if (chip) { chip.classList.toggle("offline", !DB.online); chip.innerHTML = '<i></i>' + (DB.online ? "Online" : "Offline"); }
+  if (count) count.textContent = avail.length + " request" + (avail.length === 1 ? "" : "s") + " near you" + (DB.online ? "" : " · Offline");
   const refresh = $("#r-avail-refresh");
   if (refresh) refresh.classList.toggle("spinning", !!UI.loading);
   const filters = $("#r-avail-filters");
@@ -612,7 +611,7 @@ function renderAvailable() {
     list.innerHTML = '<div class="r-alert"><div class="resi err"><svg width="30" height="30"><use href="#i-alert"/></svg></div><h3>Could not load requests</h3><p>' + esc(UI.error) + '</p><button class="r-btn-soft" data-r-retry="1">Try again</button></div>';
     return;
   }
-  let items = availableJobs();
+  let items = avail;
   if (UI.cat !== "all") items = items.filter((j) => j.cat === UI.cat);
   if (UI.q) {
     const q = UI.q.toLowerCase();
@@ -624,50 +623,36 @@ function renderAvailable() {
     list.innerHTML = '<div class="r-empty"><div class="resi"><svg width="34" height="34"><use href="#i-box"/></svg></div><h3>No requests match</h3><p>' + (reset ? "Try a different category or clear your search." : "New requests near the ADNU campus will appear here.") + '</p>' + (reset ? '<button class="r-btn-soft" data-r-reset="1">Reset filters</button>' : "") + "</div>";
     return;
   }
-  if (activeJob()) {
-    list.innerHTML = '<div class="r-note"><svg width="15" height="15"><use href="#i-alert"/></svg>You already have an active delivery. Finish it before accepting another.</div>' + items.map((j) => jobCardHTML(j)).join("");
-  } else {
-    list.innerHTML = items.map((j) => jobCardHTML(j)).join("");
-  }
+  const note = activeJob() ? '<div class="r-note"><svg width="15" height="15"><use href="#i-alert"/></svg>Finish your active delivery before accepting another.</div>' : "";
+  list.innerHTML = note + items.map((j) => jobCardHTML(j)).join("");
 }
 
 function renderActive() {
   const box = $("#r-active-body");
   if (!box) return;
   const j = activeJob();
+  const sub = $("#r-active-sub");
   if (!j) {
-    box.innerHTML = '<div class="r-empty" style="padding-top:40px"><div class="resi"><svg width="34" height="34"><use href="#i-run"/></svg></div><h3>No active delivery</h3><p>Accept a request from Available to start a run. Active runs show live status controls here.</p><button class="r-btn-yellow" style="margin-top:14px" data-r-go="r-available"><svg width="17" height="17"><use href="#i-box"/></svg>Browse requests</button></div>';
-    renderActiveRecent();
+    if (sub) sub.textContent = "Your current run";
+    box.innerHTML = '<div class="r-empty" style="padding-top:40px"><div class="resi"><svg width="34" height="34"><use href="#i-run"/></svg></div><h3>No active delivery</h3><p>Accept a request to start a run. Live status controls appear here.</p><button class="r-btn-yellow" style="margin-top:14px" data-r-go="r-available"><svg width="17" height="17"><use href="#i-box"/></svg>Browse requests</button></div>';
     return;
   }
   const meta = statusOf(j);
-  const sub = $("#r-active-sub");
-  if (sub) sub.textContent = j.id + " · " + esc(j.customer);
-  const step = !DB.online && j.status !== "arriving" ? "You are offline — go online to keep updating." : "Next: " + (meta.next === "delivered" ? "Confirm the handoff PIN" : (STATUS[meta.next] ? STATUS[meta.next].label : ""));
+  if (sub) sub.textContent = j.id + " · " + j.customer;
   box.innerHTML =
-    '<div class="r-activecard"><div class="r-ac-top"><span class="r-pill ' + meta.pill + '">' + meta.label + '</span><span style="font-size:11.5px;font-weight:800;opacity:.7">' + esc(j.id) + "</span></div>" +
-    '<h2 style="padding:0 14px">' + esc(j.title) + "</h2>" +
-    '<div style="padding:0 14px">' + routeHTML(j) + "</div>" +
-    '<div class="r-progress" style="padding:0 14px"><div class="r-ptrack"><div class="r-pfill" style="width:' + meta.progress + '%"></div></div><div class="r-plabels"><span>' + meta.label + "</span><span>" + step + "</span></div></div>" +
-    '<div class="r-ac-foot" style="padding:0 14px 10px"><div class="r-ac-cust"><div class="avatar">' + esc(j.customerInitials) + "</div><div><b>" + esc(j.customer) + "</b><small>Customer</small></div></div>" +
-    '<div class="r-ac-amount"><b style="font-size:11.5px">' + esc(j.window) + "</b><small>Preferred time</small></div></div>" +
-    (j.note ? '<p class="r-note" style="margin:0 14px 12px"><svg width="15" height="15"><use href="#i-note"/></svg>' + esc(j.note) + "</p>" : "") +
-    '<div style="padding:0 14px 14px"><div class="r-twocol"><button class="r-btn-soft" data-r-act="chat" data-id="' + esc(j.id) + '"><svg width="17" height="17"><use href="#i-chat"/></svg>Message customer</button>' +
-    '<button class="r-btn-soft" data-r-act="call" data-id="' + esc(j.id) + '"><svg width="17" height="17"><use href="#i-phone"/></svg>Call</button></div></div></div>' +
+    '<div class="r-activecard"><div class="r-ac-top"><span class="r-pill ' + meta.pill + '">' + meta.label + "</span>" +
+    '<button class="r-act-link" type="button" data-r-resume="' + esc(j.id) + '"><svg width="13" height="13"><use href="#i-route"/></svg>Track</button></div>' +
+    "<h2>" + esc(j.title) + "</h2>" +
+    routeHTML(j) +
+    '<div class="r-progress"><div class="r-ptrack"><div class="r-pfill" style="width:' + meta.progress + '%"></div></div>' +
+    (!DB.online && j.status !== "arriving" ? '<div class="r-plabels"><span>Offline — go online to keep updating</span></div>' : "") + "</div>" +
+    '<div class="r-ac-foot"><div class="r-ac-cust"><div class="avatar">' + esc(j.customerInitials) + "</div><div><b>" + esc(j.customer) + "</b><small>Customer</small></div></div>" +
+    '<div class="r-ac-amount"><b style="font-size:12.5px">' + esc(j.window) + "</b><small>Preferred time</small></div></div>" +
+    (j.note ? '<p class="r-note" style="margin:12px 0 0"><svg width="15" height="15"><use href="#i-note"/></svg>' + esc(j.note) + "</p>" : "") +
+    '<div class="r-twocol" style="margin-top:14px"><button class="r-btn-soft" data-r-act="chat" data-id="' + esc(j.id) + '"><svg width="17" height="17"><use href="#i-chat"/></svg>Message</button>' +
+    '<button class="r-btn-soft" data-r-act="call" data-id="' + esc(j.id) + '"><svg width="17" height="17"><use href="#i-phone"/></svg>Call</button></div></div>' +
     '<div class="r-fixfoot"><button class="r-btn-primary" data-r-advance="' + esc(j.id) + '"' + (DB.online || meta.next === "delivered" ? "" : " disabled") + ">" + esc(meta.action || "") + (meta.next ? '<svg width="18" height="18"><use href="#' + (meta.next === "delivered" ? "i-check-c" : "i-chev-r") + '"/></svg>' : "") + "</button>" +
     '<button class="r-btn-ghost" style="width:100%;margin-top:8px" data-r-act="cancel" data-id="' + esc(j.id) + '">Cancel this run</button></div>';
-  renderActiveRecent();
-}
-
-function renderActiveRecent() {
-  const box = $("#r-active-recentsection");
-  if (!box) return;
-  const recent = DB.jobs.filter((j) => j.status === "delivered" && j.deliveredAt >= startOfDay(1)).sort((a, b) => b.deliveredAt - a.deliveredAt).slice(0, 2);
-  const j = activeJob();
-  box.style.display = recent.length ? "" : "none";
-  box.innerHTML = recent.length ? "<h3>Completed today</h3>" + recent.filter((r) => !j || r.id !== j.id).map((r) =>
-    '<div class="r-thread" data-r-job="' + esc(r.id) + '">' + catTile(r.cat, 42) +
-    '<div class="r-tmain"><h4>' + esc(r.title) + '</h4><p>' + esc(r.id) + " · " + esc(r.customer) + '</p></div><span class="r-pill r-st-done">Done</span></div>').join("") : "";
 }
 
 function renderTracking() {
@@ -675,27 +660,27 @@ function renderTracking() {
   if (!box) return;
   const j = jobById(UI.trackJob) || activeJob();
   const title = $("#r-track-title");
+  const chatBtn = $("#r-track-chat");
   if (!j) {
-    if (title) title.textContent = "Delivery tracking";
-    $("#r-track-chat").disabled = true;
-    box.innerHTML = '<div class="r-empty" style="padding-top:40px"><div class="resi"><svg width="34" height="34"><use href="#i-route"/></svg></div><h3>No delivery selected</h3><p>Tracking appears when you accept a request or open an active run.</p><button class="r-btn-soft" style="margin-top:14px" data-r-go="r-available">Browse requests</button></div>';
+    if (title) title.textContent = "Delivery progress";
+    if (chatBtn) chatBtn.disabled = true;
+    box.innerHTML = '<div class="r-empty" style="padding-top:40px"><div class="resi"><svg width="34" height="34"><use href="#i-route"/></svg></div><h3>No delivery selected</h3><p>Open a run from Active delivery to see its progress.</p><button class="r-btn-soft" style="margin-top:14px" data-r-go="r-active">Open active delivery</button></div>';
     return;
   }
-  $("#r-track-chat").disabled = false;
+  if (chatBtn) chatBtn.disabled = false;
   const meta = statusOf(j);
-  if (title) title.textContent = j.status === "delivered" ? "Delivery complete" : "Live tracking";
+  if (title) title.textContent = j.status === "delivered" ? "Delivery complete" : "Delivery progress";
   if (j.status === "delivered") {
-    box.innerHTML = '<div class="r-card" style="text-align:center;padding:26px 16px"><div class="resi" style="background:var(--okBg);color:var(--ok)"><svg width="34" height="34"><use href="#i-check-c"/></svg></div>' +
+    box.innerHTML = '<div class="r-card" style="text-align:center;padding:26px 16px"><div style="width:74px;height:74px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:grid;place-items:center;margin:0 auto"><svg width="34" height="34"><use href="#i-check-c"/></svg></div>' +
       "<h2>Delivered</h2><p style='color:var(--muted);margin:6px 0 0'>" + esc(j.title) + " · " + esc(j.id) + "</p>" +
       '<div class="r-wamt" style="margin:12px 0 4px">' + money(j.tip || 0) + '</div><p class="sub" style="margin:0">Tip recorded</p>' +
       '<div class="r-twocol" style="margin-top:16px"><button class="r-btn-soft" data-r-chatjob="' + esc(j.id) + '"><svg width="17" height="17"><use href="#i-chat"/></svg>Chat</button>' +
-      '<button class="r-btn-soft" data-r-go="r-history"><svg width="17" height="17"><use href="#i-receipt"/></svg>History</button></div></div>' + stepHTML(j);
+      '<button class="r-btn-soft" data-r-go="r-history"><svg width="17" height="17"><use href="#i-receipt"/></svg>History</button></div></div>';
     return;
   }
-  const top = '<div class="r-card" style="padding:16px"><div class="r-ac-top"><span class="r-pill ' + meta.pill + '">' + meta.label + '</span><span style="font-size:11.5px;font-weight:800;opacity:.7">' + esc(j.id) + '</span></div>' +
-    "<h2>" + esc(j.title) + '</h2><p style="color:var(--muted);font-size:12.5px;margin:4px 0 0">' + esc(j.customer) + " · " + esc(j.window) + "</p>" + routeHTML(j) +
-    '<div class="r-act-actions" style="padding:0 0 4px"><button class="r-btn-primary" data-r-advance="' + esc(j.id) + '">' + esc(meta.action || "Continue") + (meta.next ? '<svg width="18" height="18"><use href="#' + (meta.next === "delivered" ? "i-check-c" : "i-chev-r") + '"/></svg>' : "") + "</button></div></div>";
-  box.innerHTML = top + stepHTML(j) + '<div style="height:16px"></div>';
+  const top = '<div class="r-card"><div class="r-ac-top"><span class="r-pill ' + meta.pill + '">' + meta.label + '</span><span class="r-trackid">' + esc(j.id) + '</span></div>' +
+    "<h2>" + esc(j.title) + '</h2><p class="r-trackmeta">' + esc(j.customer) + " · " + esc(j.window) + "</p></div>";
+  box.innerHTML = top + '<div class="r-card"><h3>Live journey</h3>' + stepHTML(j) + "</div>";
 }
 
 function renderThreads() {
@@ -720,7 +705,7 @@ function renderThreads() {
     const meta = statusOf(j);
     return '<div class="r-thread' + (UI.chatJob === j.id ? " on" : "") + '" data-r-thread="' + esc(j.id) + '">' + catTile(j.cat, 46) +
       '<div class="r-tmain"><div class="r-trow"><h4>' + esc(j.customer) + "</h4><small>" + esc(stamp) + "</small></div>" +
-      '<p class="' + (j.unread ? "unread" : "") + '">' + esc(preview) + '</p><div class="r-tsub"><span class="r-pill ' + meta.pill + '">' + meta.label + "</span><span>" + esc(j.id) + "</span></div></div>" +
+      '<p class="' + (j.unread ? "unread" : "") + '">' + esc(preview) + '</p><div class="r-tsub"><span class="r-pill ' + meta.pill + '">' + meta.label + "</span></div></div>" +
       (j.unread ? '<span class="r-unread">' + j.unread + "</span>" : "") + "</div>";
   }).join("");
 }
@@ -749,7 +734,6 @@ function renderChat() {
   const n = $("#r-ch-name");
   const s = $("#r-ch-status");
   const call = $("#r-ch-call");
-  const banner = $("#r-ch-banner");
   const msgs = $("#r-ch-msgs");
   const quick = $("#r-ch-quick");
   const input = $("#r-ch-input");
@@ -761,7 +745,6 @@ function renderChat() {
     if (call) call.disabled = true;
     if (input) input.disabled = true;
     if (send) send.disabled = true;
-    if (banner) banner.hidden = true;
     if (quick) quick.innerHTML = "";
     if (msgs) msgs.innerHTML = '<div class="r-empty" style="padding-top:30px"><div class="resi"><svg width="30" height="30"><use href="#i-chat"/></svg></div><h3>No conversation selected</h3><p>Open a thread from Messages.</p></div>';
     return;
@@ -771,13 +754,12 @@ function renderChat() {
   if (s) s.textContent = statusOf(j).label + " · " + j.id;
   if (call) call.disabled = false;
   if (call) call.dataset.id = j.id;
-  if (banner) banner.hidden = false;
   if (input) { input.disabled = false; input.placeholder = "Message " + firstWord(j.customer) + "…"; }
   if (send) send.disabled = false;
   if (quick) quick.innerHTML = ["I'm on my way!", "I'm at the pickup point.", "Please wait a moment.", "I've arrived 🛵"].map((q) => '<button class="r-chip-filter" data-r-quick="' + esc(q) + '">' + esc(q) + "</button>").join("");
   if (msgs) {
     if (!j.msgs.length) {
-      msgs.innerHTML = '<div class="r-empty" style="padding-top:26px"><div class="resi"><svg width="30" height="30"><use href="#i-chat"/></svg></div><h3>No messages yet</h3><p>Start the conversation with a quick reply or a custom message.</p></div>';
+      msgs.innerHTML = '<div class="r-empty" style="padding-top:26px"><div class="resi"><svg width="30" height="30"><use href="#i-chat"/></svg></div><h3>No messages yet</h3><p>Start the conversation with a quick reply or a custom message. Demo chats stay on this device.</p></div>';
     } else {
       let lastDay = "";
       msgs.innerHTML = j.msgs.map((m) => {
@@ -830,7 +812,6 @@ function renderHistory() {
   if (sum) {
     sum.innerHTML = '<div class="r-wallet"><div class="r-wtop"><h3>All-time</h3><span class="r-pill r-st-done">' + delivered.length + " delivered</span></div>" +
       '<div class="r-hrow"><div class="r-ostat"><b>' + money(stats.tips) + "</b><small>Tips recorded</small></div>" +
-      '<div class="r-ostat"><b>' + stats.completion + "</b><small>Completion</small></div>" +
       '<div class="r-ostat"><b>' + stats.cancelled + "</b><small>Cancelled</small></div></div></div>";
   }
   const list = $("#r-hist-list");
@@ -843,7 +824,7 @@ function renderHistory() {
     const done = j.status === "delivered";
     return '<article class="r-histrow" data-r-job="' + esc(j.id) + '">' + catTile(j.cat, 44) +
       '<div class="r-hmain"><div class="r-trow"><h4>' + esc(j.title) + "</h4>" + (done ? '<span class="r-htip">+' + money(j.tip || 0) + " tip</span>" : '<span class="r-pill r-st-cancel">Cancelled</span>') + "</div>" +
-      '<p>' + esc(j.id) + " · " + esc(j.customer) + "</p><small>" + dayLabel(j.deliveredAt || j.cancelledAt) + "</small></div></article>";
+      "<p>" + esc(j.id) + " · " + dayLabel(j.deliveredAt || j.cancelledAt) + "</p></div></article>";
   }).join("");
 }
 
@@ -888,11 +869,11 @@ function renderProfile() {
       "<div class='r-pinfo'><h2>" + esc(who.name) + "</h2><p>" + (who.sid ? "Student ID " + esc(who.sid) + " · " : "") + "Runner account</p>" +
       '<div class="r-pstats"><div class="r-pstat"><b>' + (stats.rating ? "★ " + stats.rating : "—") + "</b><small>" + (stats.rating ? "Rating" : "No ratings yet") + "</small></div><div class='r-pstat'><b>" + stats.done + "</b><small>Deliveries</small></div><div class='r-pstat'><b>" + stats.completion + "</b><small>Completion</small></div></div></div></div>";
   }
-  const statsHTML = '<div class="r-menugroup"><div class="r-kv"><span>Email</span><b>' + esc(who.email || "Not set") + '</b></div><div class="r-kv"><span>Student ID</span><b>' + esc(who.sid || "Not set") + '</b></div><div class="r-kv"><span>Phone</span><b>' + esc(who.phone || "Not set") + "</b></div></div>";
+  const statsHTML = '<div class="r-menugroup"><div class="r-kv"><span>Email</span><b>' + esc(who.email || "Not set") + '</b></div><div class="r-kv"><span>Phone</span><b>' + esc(who.phone || "Not set") + "</b></div></div>";
   const menu = $("#r-profile-menu");
   if (menu) {
     const groups = [
-      [["vehicle", "Vehicle & plate", "i-bike", DB.profile.vehicle ? DB.profile.vehicle : "Not set"], ["docs", "Documents & clearance", "i-note", "Not available"], ["payout", "Payout settings", "i-wallet", "Not configured"], ["notifs", "Notification settings", "i-bell", DB.settings.push ? "On" : "Off"]],
+      [["vehicle", "Vehicle & plate", "i-bike", DB.profile.vehicle ? DB.profile.vehicle : "Not set"], ["setup", "Runner setup & documents", "i-note", ""], ["notifs", "Notification settings", "i-bell", DB.settings.push ? "On" : "Off"]],
       [["safety", "Safety & SOS", "i-shield", "Campus safety"], ["help", "Help center", "i-info", ""], ["terms", "Terms & privacy", "i-note", ""], ["rate", "Rate Knights Delivery", "i-star", ""]],
       [["switch", "Switch to customer mode", "i-user", ""], ["signout", "Sign out", "i-power", ""]]
     ];
@@ -925,7 +906,7 @@ function openJobSheet(id) {
   const actions = j.status === "available"
     ? acceptButtonHTML(j).replace('class="r-acceptbtn"', 'class="r-btn-yellow" style="width:100%"')
     : isActive
-      ? '<button class="r-btn-primary" style="width:100%" data-r-resume="' + esc(j.id) + '">' + esc(meta.action || "Open delivery") + "</button>"
+      ? '<button class="r-btn-primary" style="width:100%" data-r-act="open-active">Open active delivery</button>'
       : '<button class="r-btn-soft" style="width:100%" data-r-chatjob="' + esc(j.id) + '"><svg width="17" height="17"><use href="#i-chat"/></svg>Open chat</button>';
   KD.openSheet(
     '<div class="r-sheettop">' + catTile(j.cat, 52) + "<div><h2>" + esc(j.title) + '</h2><p class="sub" style="margin:2px 0 0">' + esc(j.id) + " · " + esc(j.customer) + "</p></div></div>" +
@@ -933,8 +914,7 @@ function openJobSheet(id) {
     (j.items ? '<div class="r-note" style="margin:0 0 10px"><svg width="15" height="15"><use href="#i-box"/></svg><span>' + esc(j.items) + "</span></div>" : "") +
     (j.note ? '<div class="r-note" style="margin:0 0 10px"><svg width="15" height="15"><use href="#i-note"/></svg><span>' + esc(j.note) + "</span></div>" : "") +
     '<div class="breakdown"><div class="brow"><span>Delivery fee</span><span>' + money(j.fee) + "</span></div>" +
-    '<div class="brow"><span>Customer tip</span><span>' + money(j.tip || 0) + "</span></div>" +
-    '<div class="brow total"><span>Tips recorded by you</span><span>' + money(j.tip || 0) + "</span></div></div>" +
+    '<div class="brow total"><span>Tip earned by you</span><span>' + money(j.tip || 0) + "</span></div></div>" +
     '<p class="smallnote" style="text-align:left">Base runner pay is not configured in this prototype. Only customer tips are recorded as earnings.</p>' +
     '<div class="sheetactions">' + actions +
     (j.status !== "available" ? "" : '<button class="r-btn-ghost" data-r-act="close-sheet">Not now</button>') + "</div>"
@@ -948,18 +928,14 @@ function openProfileSheet(kind) {
       '<div class="r-kv"><span>Vehicle</span><b>' + esc(DB.profile.vehicle || "Not set") + "</b></div><div class='r-kv'><span>Plate</span><b>" + esc(DB.profile.plate || "Not set") + "</b></div>" +
       '<div class="r-note" style="margin-top:10px"><svg width="15" height="15"><use href="#i-info"/></svg><span>Vehicle details are stored on this device only. Add a backend profile API to save and verify them across devices.</span></div>' +
       '<div class="sheetactions"><button class="r-btn-ghost" data-r-act="close-sheet">Close</button></div>');
-  } else if (kind === "docs") {
-    KD.openSheet("<h2>Documents & clearance</h2><p class='sub'>Runner onboarding checklist.</p>" +
+  } else if (kind === "setup") {
+    KD.openSheet("<h2>Runner setup</h2><p class='sub'>Documents, clearance and payouts.</p>" +
       ['<div class="switchrow"><div class="rmain"><h4>School ID</h4><p>' + esc(who.sid || "Not set") + '</p></div><span class="r-pill r-st-muted">' + (who.sid ? "On file" : "Not set") + "</span></div>",
        '<div class="switchrow"><div class="rmain"><h4>Vehicle registration (OR/CR)</h4><p>Not available</p></div><span class="r-pill r-st-muted">N/A</span></div>',
        '<div class="switchrow"><div class="rmain"><h4>Driver\u2019s license</h4><p>Not available</p></div><span class="r-pill r-st-muted">N/A</span></div>',
        '<div class="switchrow"><div class="rmain"><h4>NBI clearance</h4><p>Not available</p></div><span class="r-pill r-st-muted">N/A</span></div>'].join("") +
-      '<div class="r-note" style="margin-top:10px"><svg width="15" height="15"><use href="#i-alert"/></svg><span>Document verification needs a backend review flow. Nothing is marked verified in this prototype.</span></div>' +
-      '<div class="sheetactions"><button class="r-btn-ghost" data-r-act="close-sheet">Close</button></div>');
-  } else if (kind === "payout") {
-    KD.openSheet("<h2>Payout settings</h2><p class='sub'>Tips and runner pay configuration.</p>" +
       '<div class="r-kv"><span>Payout method</span><b>Not configured</b></div><div class="r-kv"><span>Payout schedule</span><b>Not configured</b></div>' +
-      '<div class="r-note" style="margin-top:10px"><svg width="15" height="15"><use href="#i-alert"/></svg><span>This prototype records customer tips only. Base runner pay, commissions and automatic payouts need a payment backend and provider integration.</span></div>' +
+      '<div class="r-note" style="margin-top:10px"><svg width="15" height="15"><use href="#i-alert"/></svg><span>Document verification and payouts need a backend. This prototype records customer tips only.</span></div>' +
       '<div class="sheetactions"><button class="r-btn-ghost" data-r-act="close-sheet">Close</button></div>');
   } else if (kind === "notifs") {
     KD.openSheet("<h2>Notification settings</h2><p class='sub'>Demo toggles stored on this device.</p>" +
@@ -1036,6 +1012,7 @@ function handleAct(act, id, el) {
   if (act === "confirm-cancel") { cancelJob(id, UI.cancelReason); return; }
   if (act === "cancel") { if (j) openCancelJob(j); return; }
   if (act === "chat") { if (j) openChatFor(j.id); return; }
+  if (act === "open-active") { KD.closeSheet(); KD.go("r-active"); return; }
   if (act === "call") { if (j) callCustomer(j.id); return; }
   if (act === "clear-notifs") { DB.notifs.forEach((n) => { n.read = true; }); persist(); updateBadges(); renderNotifsSheet(); return; }
   if (act === "confirm-signout") { KD.closeSheet(); KD.doSignOut(); return; }
@@ -1068,7 +1045,7 @@ function showNav(id) {
   if (bar) {
     bar.classList.toggle("show", show);
     const active = id === "r-chat" ? "r-messages" : id === "r-tracking" ? "r-active" : id;
-    $$(".rnavitem", bar).forEach((b) => b.classList.toggle("on", b.dataset.rnav === active));
+    $$(".rnavitem", bar).forEach((b) => b.classList.toggle("active", b.dataset.rnav === active));
   }
 }
 
@@ -1222,8 +1199,6 @@ function bind() {
   wire("#r-avail-refresh", refreshAvailable);
   wire("#r-msg-refresh", () => { syncLinkedJobs(); renderThreads(); KD.toast("Inbox refreshed", "i-refresh"); });
   wire("#r-avail-sort", openSortSheet);
-  wire("#r-avail-status", () => { if (!DB.online) toggleOnline(); else KD.toast("You are online and receiving requests", "i-check-c"); });
-  wire("#r-hist-summary", () => {});
 }
 
 function boot() {

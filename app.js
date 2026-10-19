@@ -8,7 +8,7 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 const CATS = {
   food: { name: "Food", icon: "i-burger", cls: "food" },
   supplies: { name: "Supplies", icon: "i-backpack", cls: "supplies" },
-  errands: { name: "Errands", icon: "i-run", cls: "errands" },
+  errands: { name: "Errands", icon: "i-running-man", cls: "errands" },
   printing: { name: "Printing", icon: "i-printer", cls: "printing" },
 };
 const CATALOG = [
