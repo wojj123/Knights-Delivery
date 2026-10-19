@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Knights Delivery — Interactive Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="runner.css">
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 10.9 12 4.1l8.4 6.8"/><path d="M5.9 9.6v9.5a1.4 1.4 0 0 0 1.4 1.4h9.4a1.4 1.4 0 0 0 1.4-1.4V9.6"/><path d="M9.8 20.5v-4.6a2.2 2.2 0 0 1 4.4 0v4.6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 7.7 4v8.8l-7.7 4-7.7-4V7.6Z"/><path d="m4.3 7.6 7.7 4 7.7-4"/><path d="M12 11.6v8.8"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 12a8.8 8.8 0 1 0 2.6-6.2L3.2 8.2"/><path d="M3.2 3.6v4.6h4.6"/><path d="M12 7.8v4.4l2.9 1.8"/></symbol>
+  <symbol id="i-user-round" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.9"/><path d="M4.8 20.4c1.5-3.1 4.1-4.7 7.2-4.7s5.7 1.6 7.2 4.7"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.1 9.7a5.9 5.9 0 1 1 11.8 0c0 3.9 1.5 5.3 1.5 5.3H4.6s1.5-1.4 1.5-5.3Z"/><path d="M10.2 18.9a1.9 1.9 0 0 0 3.6 0"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.7"/><path d="m20.2 20.2-3.7-3.7"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.4 12H5"/><path d="m11.2 5.3-6.7 6.7 6.7 6.7"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9.3 4.9 7.1 7.1-7.1 7.1"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4.9 9.3 7.1 7.1 7.1-7.1"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.4s6.9-5.6 6.9-11.3a6.9 6.9 0 1 0-13.8 0C5.1 15.8 12 21.4 12 21.4Z"/><circle cx="12" cy="9.9" r="2.6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.4V12l3 1.8"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4 14.6 8.8 20.5 9.6 16.2 13.7 17.2 19.6 12 17.1 6.8 19.6 7.8 13.7 3.5 9.6 9.4 8.8Z"/></symbol>
+  <symbol id="i-star-fill" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3.2 14.7 8.7 20.8 9.6 16.4 13.9 17.4 20 12 17 6.6 20 7.6 13.9 3.2 9.6 9.3 8.7Z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.2 3.9h3.6l1.7 4.7-2.2 1.7a12.6 12.6 0 0 0 5.4 5.4l1.7-2.2 4.7 1.7v3.6a2.1 2.1 0 0 1-2.3 2.1A17 17 0 0 1 3.1 6.2a2.1 2.1 0 0 1 2.1-2.3Z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 11.9a8.3 8.3 0 0 1-8.3 8.3c-1.5 0-3-.4-4.2-1.1L3.2 20.8l1.7-5.2a8.3 8.3 0 1 1 15.9-3.7Z"/><path d="M8.4 12h.01M12.4 12h.01M16.4 12h.01"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m6.4 6.4 11.2 11.2M17.6 6.4 6.4 17.6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5.3v13.4M5.3 12h13.4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5.2 12.6 4.5 4.5L18.8 6.9"/></symbol>
+  <symbol id="i-check-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="m8.4 12.3 2.4 2.4 4.9-5.2"/></symbol>
+  <symbol id="i-x-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/></symbol>
+  <symbol id="i-burger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 10.4a7.6 7.6 0 0 1 15.2 0Z"/><path d="M4 12.6h16"/><path d="M4.6 15.1c0 2.8 3.3 4.9 7.4 4.9s7.4-2.1 7.4-4.9Z"/></symbol>
+  <symbol id="i-backpack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 6.6V4.4a2.4 2.4 0 0 1 4.8 0v2.2"/><path d="M5.4 9.6a8 8 0 0 1 13.2 0v8.6a1.6 1.6 0 0 1-1.6 1.6H7a1.6 1.6 0 0 1-1.6-1.6Z"/><path d="M9 14.6h6v2.9a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5Z"/></symbol>
+  <symbol id="i-run" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14.4" cy="4.6" r="1.9"/><path d="M14.1 7.4 12.7 13"/><path d="M13.6 8.6l3.6 2"/><path d="m13.9 8.3-2.5 1.9"/><path d="m12.7 13 2.6 2.6-1 4.1"/><path d="M12.7 13 10 15.1 7.7 18"/><rect x="16.4" y="8.2" width="5" height="5" rx="1.2"/><path d="M18.9 8.2v5"/></symbol>
+  <symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V4.6a.8.8 0 0 1 .8-.8h8.4a.8.8 0 0 1 .8.8V8"/><rect x="3.4" y="8" width="17.2" height="8" rx="2.2"/><path d="M7 16v4.2h10V16"/><path d="M9.6 18.4h4.8"/><path d="M17.4 11.4h.01"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.4 7.2V6a1.8 1.8 0 0 0-1.8-1.8H5.6A2.6 2.6 0 0 0 3 6.8v10.4a2.6 2.6 0 0 0 2.6 2.6h11.8a2.6 2.6 0 0 0 2.6-2.6v-7.4A2.6 2.6 0 0 0 17.4 7.2H5.6A2.6 2.6 0 0 1 3 6.8"/><path d="M16.6 13.2h.01"/></symbol>
+  <symbol id="i-cash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="6.4" width="18.8" height="11.2" rx="2"/><circle cx="12" cy="12" r="2.7"/><path d="M6.2 9.6v4.8M17.8 9.6v4.8"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="5.4" width="18.8" height="13.2" rx="2.4"/><path d="M2.6 10h18.8"/><path d="M6.2 14.8h4.2"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.8 12.2V20a1 1 0 0 1-1 1H5.2a1 1 0 0 1-1-1v-7.8"/><path d="M2.8 7.9h18.4v3.1a1.2 1.2 0 0 1-1.2 1.2H4a1.2 1.2 0 0 1-1.2-1.2Z"/><path d="M12 7.9V21"/><path d="M12 7.9C10.1 7.9 6.7 8.1 6.7 5.5c0-2.2 2.2-2.9 3.4-1.4C11.3 5.6 12 7.9 12 7.9Zm0 0c1.9 0 5.3.2 5.3-2.4 0-2.2-2.2-2.9-3.4-1.4C12.7 5.6 12 7.9 12 7.9Z"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 2.8h11.6v18.5l-2.3-1.5-1.9 1.4-1.6-1.4-1.6 1.4-1.9-1.4-2.3 1.5Z"/><path d="M9.4 7.6h5.2M9.4 11.2h5.2"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16.8 2.6 4 4-4 4"/><path d="M3 11.7v-1.1a4 4 0 0 1 4-4h13.8"/><path d="m7.2 21.4-4-4 4-4"/><path d="M21 12.3v1.1a4 4 0 0 1-4 4H3.2"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 20.2H4.3l1.1-4.1L16.7 4.8a2.3 2.3 0 0 1 3.3 3.3L8.7 19.2"/><path d="m14.6 6.9 3.3 3.3"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h8.7M17.3 7H20"/><circle cx="15" cy="7" r="2.3"/><path d="M4 12h3.7M12.3 12H20"/><circle cx="10" cy="12" r="2.3"/><path d="M4 17h10.7M19.3 17H20"/><circle cx="17" cy="17" r="2.3"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.2 20.8H5.6a2.4 2.4 0 0 1-2.4-2.4V5.6a2.4 2.4 0 0 1 2.4-2.4h3.6"/><path d="m15.8 16.8 4.8-4.8-4.8-4.8"/><path d="M20.6 12H9.4"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.4c-.8.3-1 1-1 1.7"/><path d="M12 16.6h.01"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.6A8.6 8.6 0 1 1 9.4 3.6a7 7 0 0 0 11 11Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2.3M12 18.9v2.3M2.8 12h2.3M18.9 12h2.3M5.5 5.5l1.6 1.6M16.9 16.9l1.6 1.6M18.5 5.5l-1.6 1.6M7.1 16.9l-1.6 1.6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.6s7.8-3.4 7.8-9.7V5.6L12 2.4 4.2 5.6v6.3c0 6.3 7.8 9.7 7.8 9.7Z"/><path d="m9 11.4 2.1 2.1 4-4.3"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 2.6-7 19.8-3.9-8.9-8.9-3.9Z"/><path d="M21.4 2.6 10.5 13.5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 12S6.1 5.6 12 5.6 21.4 12 21.4 12 17.9 18.4 12 18.4 2.6 12 2.6 12Z"/><circle cx="12" cy="12" r="2.7"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 12S6.1 5.6 12 5.6c1.6 0 3.1.4 4.4 1.1M21.4 12S17.9 18.4 12 18.4c-1.6 0-3.1-.4-4.4-1.1"/><path d="M9.8 9.8a3.1 3.1 0 0 0 4.4 4.4"/><path d="m4.2 4.2 15.6 15.6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 7h15.6"/><path d="M9.4 7V4.7h5.2V7"/><path d="m6.4 7 1 13.3h9.2l1-13.3"/><path d="M10.2 11v5.6M13.8 11v5.6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="M12 7.6V13"/><path d="M12 16.4h.01"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.4" width="18" height="13.2" rx="2.2"/><path d="m3.4 7.4 8.6 5.7 8.6-5.7"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.6" width="14.8" height="9.8" rx="2.4"/><path d="M8.2 10.6V8a3.8 3.8 0 0 1 7.6 0v2.6"/><path d="M12 14.6v2.4"/></symbol>
+  <symbol id="i-moto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.8" cy="17.2" r="2.9"/><circle cx="18.2" cy="17.2" r="2.9"/><path d="M8.7 17.2h6.6"/><path d="M15.3 17.2 17.6 8.5h1.9"/><path d="m8.7 13.8 2.9-5.3h3.7"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9.2" y="2.6" width="5.6" height="11.2" rx="2.8"/><path d="M6.6 11a5.4 5.4 0 0 0 10.8 0"/><path d="M12 16.4V19.8"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 9.4v5.2h3.4l4.6 3.6V5.8L7.6 9.4Z"/><path d="M15.7 9.4a3.9 3.9 0 0 1 0 5.2"/><path d="M18.3 6.8a7.7 7.7 0 0 1 0 10.4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.4 1.9 5.5 5.5 1.9-5.5 1.9-1.9 5.5-1.9-5.5-5.5-1.9 5.5-1.9Z"/><path d="m18.6 16.2.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v11.4"/><path d="m7.3 9.9 4.7 4.7 4.7-4.7"/><path d="M4.2 20.6h15.6"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20.7 11l-8.7 8.2v-4.9c-4.9 0-7.8 1.4-9.2 4.9C2.7 12 6.2 7.6 12 7.6Z"/></symbol>
+  <symbol id="i-google" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.9 12A8.9 8.9 0 1 0 16.1 19.5"/><path d="M12.2 12h8.7"/></symbol>
+  <symbol id="i-facebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.8"/><path d="M16 20.9V8.5a3 3 0 0 0-3-3h-.8"/><path d="M11.3 11.5h6.4"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.8 19.4 6.2v6c0 4.5-3.2 7.3-7.4 8.4-4.2-1.1-7.4-3.9-7.4-8.4v-6Z"/><path d="M9.8 8.6v6.8"/><path d="M14.8 8.6 10.6 12l4.2 3.4"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 10.4V19a1.6 1.6 0 0 0 1.6 1.6h12a1.6 1.6 0 0 0 1.6-1.6v-8.6"/><path d="M3.2 6.4h17.6l-.8 4H4Z"/><path d="M9.6 10.4V20.6"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4V11"/><path d="M6.8 6.6a7.6 7.6 0 1 0 10.4 0"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 7h10.4M4.2 12h7.2M4.2 17h4"/><path d="M17.4 6.4v11.2"/><path d="m14.6 15 2.8 2.8L20.2 15"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.8h8.6L19.4 7.6V21.2H6Z"/><path d="M14.4 2.8v5h5"/><path d="M9 13.4h6.4M9 17h4.2"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.2" cy="5.8" r="2.4"/><circle cx="17.8" cy="18.2" r="2.4"/><path d="M8.6 5.8h5.2a3.4 3.4 0 0 1 0 6.8h-3.6a3.4 3.4 0 0 0 0 6.8h5.2"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.6 3.4H4.2a.8.8 0 0 0-.8.8v7.4a1.6 1.6 0 0 0 .5 1.1l8.1 8.1a1.6 1.6 0 0 0 2.3 0l6.4-6.4a1.6 1.6 0 0 0 0-2.3l-8.1-8.1a1.6 1.6 0 0 0-1-.6Z"/><path d="M8 8h.01"/></symbol>
+</svg>
+
+<div class="stage">
+  <div class="device">
+    <div class="app" id="app">
+
+      <div class="screen tint" id="scr-login">
+        <div class="auth-hero">
+          <svg class="scene" viewBox="0 280 414 380" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2E6FD0"/><stop offset=".55" stop-color="#6FA3EC"/><stop offset="1" stop-color="#CBDCF6"/>
+              </linearGradient>
+              <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+                <stop offset="0" stop-color="#FFF8DC" stop-opacity=".9"/><stop offset="1" stop-color="#FFF8DC" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="colg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#F7EDD6"/><stop offset="1" stop-color="#DCC69C"/>
+              </linearGradient>
+              <linearGradient id="grnd" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#D0BE98"/><stop offset=".5" stop-color="#E4DAF0"/><stop offset="1" stop-color="#F4F3FA"/>
+              </linearGradient>
+              <filter id="cloudblur"><feGaussianBlur stdDeviation="7"/></filter>
+              <filter id="softblur"><feGaussianBlur stdDeviation="2"/></filter>
+            </defs>
+            <rect width="414" height="868" fill="url(#skyg)"/>
+            <circle cx="330" cy="120" r="150" fill="url(#glow)"/>
+            <g filter="url(#cloudblur)" fill="#fff">
+              <ellipse cx="60" cy="150" rx="58" ry="20" opacity=".85"/>
+              <ellipse cx="98" cy="138" rx="40" ry="16" opacity=".9"/>
+              <ellipse cx="28" cy="140" rx="34" ry="14" opacity=".75"/>
+              <ellipse cx="308" cy="230" rx="64" ry="22" opacity=".88"/>
+              <ellipse cx="348" cy="216" rx="42" ry="16" opacity=".9"/>
+              <ellipse cx="266" cy="218" rx="36" ry="15" opacity=".7"/>
+              <ellipse cx="156" cy="96" rx="42" ry="14" opacity=".8"/>
+              <ellipse cx="184" cy="88" rx="26" ry="10" opacity=".85"/>
+              <ellipse cx="330" cy="340" rx="52" ry="18" opacity=".75"/>
+              <ellipse cx="366" cy="330" rx="32" ry="12" opacity=".8"/>
+              <ellipse cx="70" cy="290" rx="46" ry="16" opacity=".55"/>
+            </g>
+            <path d="M70 210q7-8 14 0" stroke="#FFFFFF" stroke-width="2.5" fill="none" opacity=".65" stroke-linecap="round"/>
+            <path d="M96 224q6-7 12 0" stroke="#FFFFFF" stroke-width="2.5" fill="none" opacity=".55" stroke-linecap="round"/>
+            <g transform="translate(0,232)">
+            <g filter="url(#softblur)">
+              <path d="M44 470q10-60 4-130" stroke="#7A5B3A" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <g stroke="#2E7D4F" stroke-width="11" stroke-linecap="round" fill="none">
+                <path d="M48 340q-38-6-56-28"/><path d="M48 342q-40 6-58-6"/><path d="M48 336q-30-20-34-46"/><path d="M50 338q26-26 22-52"/><path d="M50 344q36-4 54-24"/>
+              </g>
+              <path d="M370 470q-10-60-4-130" stroke="#7A5B3A" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <g stroke="#2E7D4F" stroke-width="11" stroke-linecap="round" fill="none">
+                <path d="M366 340q38-6 56-28"/><path d="M366 342q40 6 58-6"/><path d="M366 336q30-20 34-46"/><path d="M364 338q-26-26-22-52"/><path d="M364 344q-36-4-54-24"/>
+              </g>
+            </g>
+            <rect x="84" y="272" width="246" height="128" fill="#C8B38B"/>
+            <path d="M78 232 207 138l129 94Z" fill="#EBD9B6"/>
+            <path d="M100 232 207 156l107 76Z" fill="#E3CFA8"/>
+            <rect x="203.5" y="92" width="7" height="34" rx="1.5" fill="#F7F1E1"/>
+            <rect x="188" y="103" width="38" height="7" rx="1.5" fill="#F7F1E1"/>
+            <rect x="78" y="232" width="258" height="40" fill="#F0E1BE"/>
+            <rect x="86" y="238" width="242" height="26" fill="#F7ECD2" stroke="#CDB98F" stroke-width="1.5"/>
+            <text x="207" y="256" text-anchor="middle" font-family="Georgia,serif" font-size="12.5" letter-spacing="3.5" fill="#8F7C58">ATENEO DE NAGA</text>
+            <g fill="url(#colg)">
+              <rect x="82" y="272" width="32" height="10" rx="2"/><rect x="86" y="282" width="24" height="112"/><rect x="82" y="394" width="32" height="10" rx="2"/>
+              <rect x="126" y="272" width="32" height="10" rx="2"/><rect x="130" y="282" width="24" height="112"/><rect x="126" y="394" width="32" height="10" rx="2"/>
+              <rect x="170" y="272" width="32" height="10" rx="2"/><rect x="174" y="282" width="24" height="112"/><rect x="170" y="394" width="32" height="10" rx="2"/>
+              <rect x="214" y="272" width="32" height="10" rx="2"/><rect x="218" y="282" width="24" height="112"/><rect x="214" y="394" width="32" height="10" rx="2"/>
+              <rect x="258" y="272" width="32" height="10" rx="2"/><rect x="262" y="282" width="24" height="112"/><rect x="258" y="394" width="32" height="10" rx="2"/>
+              <rect x="302" y="272" width="32" height="10" rx="2"/><rect x="306" y="282" width="24" height="112"/><rect x="302" y="394" width="32" height="10" rx="2"/>
+            </g>
+            <rect x="70" y="404" width="274" height="13" fill="#EADCC0"/>
+            <rect x="60" y="417" width="294" height="14" fill="#E2D2B0"/>
+            <rect x="48" y="431" width="318" height="15" fill="#D9C8A4"/>
+            <rect x="34" y="446" width="346" height="16" fill="#D0BE98"/>
+            <rect y="462" width="414" height="406" fill="url(#grnd)"/>
+            </g>
+          </svg>
+          <div class="auth-hero-copy">
+            <h1>Knights <span>Delivery</span></h1>
+            <p>Get it. Delivered on campus.</p>
+            <div class="auth-pills">
+              <span class="auth-pill"><svg width="16" height="16"><use href="#i-run"/></svg>Live courier tracking</span>
+              <span class="auth-pill"><svg width="16" height="16"><use href="#i-wallet"/></svg>Pay with GCash, Maya or cash</span>
+              <span class="auth-pill"><svg width="16" height="16"><use href="#i-chat"/></svg>Chat &amp; call your courier</span>
+            </div>
+          </div>
+        </div>
+        <div class="auth">
+          <h1>Welcome back!</h1>
+          <p class="authsub">Log in to your Knights Delivery account</p>
+          <div class="field">
+            <label>Email</label>
+            <div class="inputwrap">
+              <span class="lead"><svg width="21" height="21"><use href="#i-mail"/></svg></span>
+              <input class="input has-lead" id="lg-email" type="email" placeholder="juandelacruz@gbox.adnu.edu.ph" value="jude@adnu.edu.ph">
+            </div>
+            <div class="hint" id="lg-email-hint">Please enter a valid email.</div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="inputwrap">
+              <span class="lead"><svg width="21" height="21"><use href="#i-lock"/></svg></span>
+              <input class="input has-lead" id="lg-pass" type="password" placeholder="••••••••" value="knights123" style="padding-right:52px">
+              <span class="trail"><button class="iconbtn ghost" id="lg-eye" type="button" style="width:40px;height:40px"><svg width="20" height="20"><use href="#i-eye"/></svg></button></span>
+            </div>
+            <div class="hint" id="lg-pass-hint">Password must be at least 6 characters.</div>
+          </div>
+          <div style="text-align:right;margin-top:12px">
+            <button class="link" id="lg-forgot">Forgot password?</button>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" id="lg-btn">Log In</button>
+            <button class="btn btn-ghost" id="lg-tosignup" style="margin-top:12px">Sign Up</button>
+            <div class="divider">OR CONTINUE WITH</div>
+            <div class="socialrow">
+              <button class="socbtn" data-social="Google"><svg width="20" height="20"><use href="#i-google"/></svg>Google</button>
+              <button class="socbtn" data-social="Facebook"><svg width="20" height="20"><use href="#i-facebook"/></svg>Facebook</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen tint" id="scr-signup">
+        <div class="sb-space"></div>
+        <div class="header">
+          <button class="iconbtn ghost" data-back><svg width="22" height="22"><use href="#i-back"/></svg></button>
+        </div>
+        <div class="auth">
+          <div class="authlogo"><svg width="37" height="37"><use href="#i-logo"/></svg></div>
+          <h1>Create account</h1>
+          <p class="authsub">Join the Knight couriers network</p>
+          <div class="field">
+            <label>Full name</label>
+            <div class="inputwrap">
+              <span class="lead"><svg width="21" height="21"><use href="#i-user-round"/></svg></span>
+              <input class="input has-lead" id="su-name" type="text" placeholder="Juan Dela Cruz">
+            </div>
+            <div class="hint" id="su-name-hint">Please enter your full name.</div>
+          </div>
+          <div class="field">
+            <label>Student ID</label>
+            <div class="inputwrap">
+              <span class="lead"><svg width="21" height="21"><use href="#i-receipt"/></svg></span>
+              <input class="input has-lead" id="su-id" type="text" placeholder="2023-10482">
+            </div>
+            <div class="hint" id="su-id-hint">Student ID is required.</div>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <div class="inputwrap">
+              <span class="lead"><svg width="21" height="21"><use href="#i-mail"/></svg></span>
+              <input class="input has-lead" id="su-email" type="email" placeholder="juandelacruz@gbox.adnu.edu.ph">
+            </div>
+            <div class="hint" id="su-email-hint">Please enter a valid email.</div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="inputwrap">
+              <span class="lead"><svg width="21" height="21"><use href="#i-lock"/></svg></span>
+              <input class="input has-lead" id="su-pass" type="password" placeholder="At least 6 characters" style="padding-right:52px">
+              <span class="trail"><button class="iconbtn ghost" id="su-eye" type="button" style="width:40px;height:40px"><svg width="20" height="20"><use href="#i-eye"/></svg></button></span>
+            </div>
+            <div class="hint" id="su-pass-hint">Password must be at least 6 characters.</div>
+          </div>
+          <div class="checkline" id="su-terms">
+            <span class="checkbox"><svg width="13" height="13"><use href="#i-check"/></svg></span>
+            <p>I agree to the <b>Terms of Service</b> and <b>Privacy Policy</b> of Knights Delivery.</p>
+          </div>
+          <div class="hint" id="su-terms-hint">Please accept the terms to continue.</div>
+          <div class="actions">
+            <button class="btn btn-primary" id="su-btn">Create Account</button>
+            <div class="authfoot">Already have an account? <button class="link" id="su-tologin">Log In</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen with-nav" id="scr-home">
+        <div class="sb-space"></div>
+        <div class="homehead">
+          <div class="grow">
+            <div class="greeting" style="padding-left:0;padding-right:0">
+              <h1 id="home-greet">Hey Jude <span style="font-size:24px">👋</span></h1>
+              <div class="location"><svg width="16" height="16"><use href="#i-pin"/></svg> Ateneo De Naga University</div>
+            </div>
+          </div>
+          <button class="iconbtn hasnews" id="home-bell"><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div class="pad">
+          <div class="searchbar" id="home-search" style="margin-top:16px">
+            <svg width="21" height="21"><use href="#i-search"/></svg>
+            <span>What do you need?</span>
+          </div>
+          <div class="promo" id="home-promo">
+            <button class="pclose" id="promo-close"><svg width="12" height="12"><use href="#i-close"/></svg></button>
+            <div class="pic"><svg width="23" height="23"><use href="#i-gift"/></svg></div>
+            <div class="grow">
+              <h4>Free delivery on request #1</h4>
+              <p>Use code <b>KNIGHT1</b> at checkout</p>
+            </div>
+            <button class="claim" id="promo-claim">Order now</button>
+          </div>
+          <div class="catrow" id="home-cats">
+            <div class="cat c-food" data-cat="food"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-burger"/></svg><span>Food</span></div>
+            <div class="cat c-supplies" data-cat="supplies"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-backpack"/></svg><span>Supplies</span></div>
+            <div class="cat c-errands" data-cat="errands"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-run"/></svg><span>Errands</span></div>
+            <div class="cat c-printing" data-cat="printing"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-printer"/></svg><span>Printing</span></div>
+          </div>
+          <button class="btn btn-primary" id="home-create" style="margin-top:10px"><svg width="20" height="20"><use href="#i-plus"/></svg>Create Request</button>
+          <div class="section">
+            <h2>Recent Orders <svg width="19" height="19" style="color:var(--muted)"><use href="#i-clock"/></svg></h2>
+            <button class="seeall" id="home-seeall">See all <svg width="15" height="15"><use href="#i-chev-r"/></svg></button>
+          </div>
+          <div id="home-recent"></div>
+          <div class="smallnote" id="home-empty" style="display:none">No orders yet — create your first request!</div>
+        </div>
+      </div>
+
+      <div class="screen" id="scr-search">
+        <div class="sb-space"></div>
+        <div class="pad searchscreen">
+          <div style="display:flex;gap:10px;align-items:center">
+            <div class="searchbar" style="flex:1">
+              <svg width="21" height="21"><use href="#i-search"/></svg>
+              <input id="search-input" placeholder="Search food, supplies, printing…" autocomplete="off">
+            </div>
+            <button class="iconbtn ghost" id="search-back"><svg width="22" height="22"><use href="#i-close"/></svg></button>
+          </div>
+          <div id="search-idle">
+            <div class="section"><h2>Recent searches</h2></div>
+            <div class="chips" id="search-history"></div>
+            <div class="section"><h2>Popular near you</h2></div>
+            <div id="search-popular"></div>
+          </div>
+          <div id="search-results" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="screen" id="scr-create">
+        <div class="sb-space"></div>
+        <div class="header">
+          <button class="iconbtn ghost" data-back><svg width="22" height="22"><use href="#i-back"/></svg></button>
+          <h1 style="font-size:26px">Create Request</h1>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" data-bell><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div class="pad">
+          <div class="field">
+            <label>Items description <span class="req">*</span></label>
+            <textarea class="input" id="cs-items" rows="3" placeholder="e.g 2 pcs. lechon manok, 1 rice"></textarea>
+            <div class="hint" id="cs-items-hint">Tell us what to get or do.</div>
+          </div>
+          <div class="field">
+            <label>Category <span class="req">*</span></label>
+            <div class="selectrow" id="cs-catbtn">
+              <div class="tile t-neutral" id="cs-cattile" style="width:42px;height:42px;border-radius:13px"><svg width="21" height="21"><use href="#i-box"/></svg></div>
+              <div class="grow ph" id="cs-catlabel">Select a category</div>
+              <svg class="chev" width="20" height="20"><use href="#i-chev-d"/></svg>
+            </div>
+            <div class="hint" id="cs-cat-hint">Please pick a category.</div>
+          </div>
+          <div class="field">
+            <label>Drop-off location <span class="req">*</span></label>
+            <div class="inputwrap">
+              <span class="lead"><svg width="21" height="21"><use href="#i-pin"/></svg></span>
+              <input class="input has-lead" id="cs-drop" placeholder="e.g Phelan P217 Lab (2nd Floor)">
+            </div>
+            <div class="chips" id="cs-dropchips"></div>
+            <div class="hint" id="cs-drop-hint">Where should we deliver it?</div>
+          </div>
+          <div class="field">
+            <label>Preferred time <span class="req">*</span></label>
+            <div class="selectrow" id="cs-timebtn">
+              <div class="tile t-neutral" style="width:42px;height:42px;border-radius:13px"><svg width="21" height="21"><use href="#i-clock"/></svg></div>
+              <div class="grow" id="cs-timelabel">Today, 6:00pm – 6:30pm</div>
+              <svg class="chev" width="20" height="20"><use href="#i-chev-r"/></svg>
+            </div>
+          </div>
+          <div class="field">
+            <label>Notes <span style="color:var(--muted);font-weight:700">(optional)</span></label>
+            <textarea class="input" id="cs-notes" rows="2" placeholder="e.g Please get extra chilli oil. Thanks!"></textarea>
+          </div>
+          <div class="field">
+            <label>Payment method</label>
+            <div class="selectrow" id="cs-paybtn">
+              <div class="tile t-neutral" style="width:42px;height:42px;border-radius:13px"><svg width="21" height="21"><use href="#i-wallet"/></svg></div>
+              <div class="grow" id="cs-paylabel">GCash</div>
+              <svg class="chev" width="20" height="20"><use href="#i-chev-d"/></svg>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px;padding:6px 16px">
+            <div class="switchrow" style="padding:14px 2px">
+              <div class="sic" style="background:var(--yellow-pale);color:var(--yellow-ink)"><svg width="20" height="20"><use href="#i-run"/></svg></div>
+              <div class="grow"><b>Express delivery</b><p>Rush in 30–45 min &middot; +₱15</p></div>
+              <button class="toggle" id="cs-express"></button>
+            </div>
+          </div>
+          <div class="feerow">
+            <svg width="21" height="21"><use href="#i-receipt"/></svg>
+            <span>Estimated delivery fee:</span>
+            <b class="amt" id="cs-fee">₱20 – ₱30</b>
+          </div>
+        </div>
+        <div class="postwrap">
+          <button class="btn btn-primary" id="cs-post">Post Request</button>
+        </div>
+      </div>
+
+      <div class="screen with-nav tint" id="scr-requests">
+        <div class="sb-space"></div>
+        <div class="header">
+          <button class="iconbtn ghost" data-back><svg width="22" height="22"><use href="#i-back"/></svg></button>
+          <h1 style="font-size:26px">My Requests</h1>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" data-bell><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div class="pad">
+          <div class="scrollx" id="req-tabs" style="margin-top:6px">
+            <button class="filterchip active" data-tab="ongoing">Ongoing</button>
+            <button class="filterchip" data-tab="completed">Completed</button>
+            <button class="filterchip" data-tab="cancelled">Cancelled</button>
+          </div>
+          <div id="req-list"></div>
+        </div>
+        <div id="req-fab" style="position:sticky;bottom:104px;display:flex;justify-content:flex-end;padding:0 22px 10px;pointer-events:none">
+          <button class="btn btn-primary" id="req-track" style="width:auto;padding:14px 34px;pointer-events:auto;font-size:15px;box-shadow:0 14px 30px rgba(36,30,110,.4)">Track</button>
+        </div>
+      </div>
+
+      <div class="screen with-nav" id="scr-tracking">
+        <div class="sb-space"></div>
+        <div class="header">
+          <button class="iconbtn ghost" data-back><svg width="22" height="22"><use href="#i-back"/></svg></button>
+          <h1 style="font-size:26px">Tracking</h1>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" data-bell><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div class="hero" id="tr-hero"></div>
+        <div class="journey">
+          <div class="jhead">
+            <h2>Live journey</h2>
+            <span class="livechip" id="tr-livechip"><span class="pulse-dot"></span>LIVE</span>
+          </div>
+          <div class="stepper" id="tr-steps"></div>
+          <div class="feedline" id="tr-feed"><svg width="17" height="17"><use href="#i-spark"/></svg><span id="tr-feedtext">Waiting for updates…</span></div>
+        </div>
+        <div id="tr-courier"></div>
+        <div class="pin-card" id="tr-pin">
+          <div class="pic"><svg width="24" height="24"><use href="#i-shield"/></svg></div>
+          <div class="grow">
+            <h4>Delivery PIN</h4>
+            <p>Show this to your courier at handoff</p>
+          </div>
+          <div class="pindigits" id="tr-pindigits"></div>
+          <button class="eyebtn" id="tr-pineye"><svg width="22" height="22"><use href="#i-eye"/></svg></button>
+        </div>
+        <div id="tr-summary"></div>
+        <div class="track-actions" id="tr-actions"></div>
+      </div>
+
+      <div class="screen noscroll" id="scr-chat">
+        <div class="sb-space"></div>
+        <div class="chatwrap">
+          <div class="chathead">
+            <button class="iconbtn ghost" data-back><svg width="22" height="22"><use href="#i-back"/></svg></button>
+            <div class="avatar" style="width:44px;height:44px;font-size:15px" id="ch-avatar">JD</div>
+            <div class="grow">
+              <h1 id="ch-name">Juan Dela Cruz</h1>
+              <div class="online" id="ch-status">Online</div>
+            </div>
+            <button class="iconbtn" id="ch-call"><svg width="20" height="20"><use href="#i-phone"/></svg></button>
+          </div>
+          <div class="msgarea" id="ch-msgs"></div>
+          <div class="quickreplies" id="ch-quick"></div>
+          <div class="chatinput">
+            <input class="input" id="ch-input" placeholder="Type a message…" autocomplete="off">
+            <button class="sendbtn" id="ch-send"><svg width="20" height="20"><use href="#i-send"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen with-nav tint" id="scr-activity">
+        <div class="sb-space"></div>
+        <div class="header">
+          <h1 style="font-size:26px;padding-left:4px">Activity</h1>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" data-bell><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div id="act-stats"></div>
+        <div class="pad">
+          <div class="scrollx" id="act-tabs" style="margin-top:16px">
+            <button class="filterchip active" data-tab="all">All</button>
+            <button class="filterchip" data-tab="ongoing">Ongoing</button>
+            <button class="filterchip" data-tab="completed">Completed</button>
+            <button class="filterchip" data-tab="cancelled">Cancelled</button>
+          </div>
+          <div id="act-list"></div>
+        </div>
+      </div>
+
+      <div class="screen with-nav" id="scr-profile">
+        <div class="sb-space"></div>
+        <div class="header">
+          <button class="iconbtn ghost" data-back><svg width="22" height="22"><use href="#i-back"/></svg></button>
+          <h1 style="font-size:26px">My Profile</h1>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" data-bell><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div class="profiletop">
+          <div class="avatar" id="pf-avatar">JJ</div>
+          <h2 id="pf-name">Jude Jude</h2>
+          <p>Student &middot; Ateneo de Naga University</p>
+        </div>
+        <div class="pad menulist">
+          <div class="menurow" id="mn-info"><span class="mic"><svg width="21" height="21"><use href="#i-user-round"/></svg></span><b>My information</b><svg class="chev" width="19" height="19"><use href="#i-chev-r"/></svg></div>
+          <div class="menurow" id="mn-pay"><span class="mic"><svg width="21" height="21"><use href="#i-wallet"/></svg></span><b>Payment methods</b><svg class="chev" width="19" height="19"><use href="#i-chev-r"/></svg></div>
+          <div class="menurow" id="mn-addr"><span class="mic"><svg width="21" height="21"><use href="#i-pin"/></svg></span><b>Addresses</b><svg class="chev" width="19" height="19"><use href="#i-chev-r"/></svg></div>
+          <div class="menurow" id="mn-set"><span class="mic"><svg width="21" height="21"><use href="#i-settings"/></svg></span><b>Settings</b><svg class="chev" width="19" height="19"><use href="#i-chev-r"/></svg></div>
+          <div class="menurow" id="mn-help"><span class="mic"><svg width="21" height="21"><use href="#i-help"/></svg></span><b>Help &amp; Support</b><svg class="chev" width="19" height="19"><use href="#i-chev-r"/></svg></div>
+          <div class="menurow" id="mn-runner"><span class="mic r-mic"><svg width="21" height="21"><use href="#i-run"/></svg></span><b>Runner mode<span class="r-msub">Courier workspace demo</span></b><span class="badge bg-yellow">RIDER</span><svg class="chev" width="19" height="19"><use href="#i-chev-r"/></svg></div>
+          <div class="menurow danger" id="mn-out"><span class="mic"><svg width="21" height="21"><use href="#i-logout"/></svg></span><b>Sign out</b></div>
+        </div>
+        <div class="smallnote">Knights Delivery v1.0 &middot; Ateneo de Naga University</div>
+      </div>
+
+      <div class="screen with-rnav r-tint" id="scr-r-dash">
+        <div class="sb-space"></div>
+        <div class="r-top">
+          <div class="r-modechip"><span class="r-livedot"></span>Runner mode</div>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" id="r-bell" type="button"><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+          <button class="r-topavatar" id="r-top-profile" type="button">MS</button>
+        </div>
+        <div class="pad">
+          <div class="r-greet">
+            <h1 id="r-greet">Good afternoon, Mig</h1>
+            <p id="r-greet-sub">Here is your courier day at a glance.</p>
+          </div>
+          <div id="r-dash-hero"></div>
+          <div id="r-dash-active"></div>
+          <div class="r-quickwrap">
+            <button class="r-quick" type="button" data-r-go="r-available">
+              <span class="r-qic q-navy"><svg width="21" height="21"><use href="#i-box"/></svg></span>
+              <b>Requests</b><small id="r-q-req">6 near you</small>
+            </button>
+            <button class="r-quick" type="button" data-r-go="r-messages">
+              <span class="r-qic q-info"><svg width="21" height="21"><use href="#i-chat"/></svg></span>
+              <b>Messages</b><small id="r-q-msg">No unread</small>
+            </button>
+            <button class="r-quick" type="button" data-r-go="r-earnings">
+              <span class="r-qic q-yellow"><svg width="21" height="21"><use href="#i-wallet"/></svg></span>
+              <b>Earnings</b><small id="r-q-earn">Tips today</small>
+            </button>
+          </div>
+          <div class="section r-sec"><h2>Nearby requests</h2><button class="seeall" type="button" data-r-go="r-available">See all <svg width="15" height="15"><use href="#i-chev-r"/></svg></button></div>
+          <div id="r-dash-jobs"></div>
+          <div id="r-dash-earn"></div>
+        </div>
+      </div>
+
+      <div class="screen with-rnav r-tint" id="scr-r-available">
+        <div class="sb-space"></div>
+        <div class="header">
+          <div class="r-headtitle"><h1 style="font-size:26px">Available requests</h1><p id="r-avail-count">Loading nearby requests</p></div>
+          <div class="grow"></div>
+          <button class="iconbtn" id="r-avail-refresh" type="button"><svg width="20" height="20"><use href="#i-repeat"/></svg></button>
+        </div>
+        <div class="pad">
+          <div id="r-avail-status"></div>
+          <div class="r-searchbar">
+            <svg width="20" height="20"><use href="#i-search"/></svg>
+            <input id="r-avail-search" placeholder="Search shop, drop-off or ID" autocomplete="off">
+          </div>
+          <div class="scrollx" id="r-avail-filters">
+            <button class="filterchip active" type="button" data-r-cat="all">All</button>
+            <button class="filterchip" type="button" data-r-cat="food">Food</button>
+            <button class="filterchip" type="button" data-r-cat="supplies">Supplies</button>
+            <button class="filterchip" type="button" data-r-cat="errands">Errands</button>
+            <button class="filterchip" type="button" data-r-cat="printing">Printing</button>
+          </div>
+          <div class="r-listhead"><span id="r-avail-sortlabel">Newest first</span><button class="r-sortbtn" id="r-avail-sort" type="button"><svg width="17" height="17"><use href="#i-sort"/></svg>Sort</button></div>
+          <div id="r-avail-list"></div>
+        </div>
+      </div>
+
+      <div class="screen with-rnav" id="scr-r-active">
+        <div class="sb-space"></div>
+        <div class="header">
+          <div class="r-headtitle"><h1 style="font-size:26px">Active delivery</h1><p id="r-active-sub">Your current run</p></div>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" id="r-active-bell" type="button"><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div class="pad">
+          <div id="r-active-body"></div>
+          <div class="section r-sec" id="r-active-recentsection" style="display:none"><h2>Completed today</h2></div>
+          <div id="r-active-done"></div>
+        </div>
+      </div>
+
+      <div class="screen" id="scr-r-tracking">
+        <div class="sb-space"></div>
+        <div class="header">
+          <button class="iconbtn ghost" data-back type="button"><svg width="22" height="22"><use href="#i-back"/></svg></button>
+          <h1 style="font-size:24px" id="r-track-title">Delivery</h1>
+          <div class="grow"></div>
+          <button class="iconbtn" id="r-track-chat" type="button"><svg width="20" height="20"><use href="#i-chat"/></svg></button>
+        </div>
+        <div id="r-track-body"></div>
+      </div>
+
+      <div class="screen with-rnav r-tint" id="scr-r-messages">
+        <div class="sb-space"></div>
+        <div class="header">
+          <div class="r-headtitle"><h1 style="font-size:26px">Messages</h1><p id="r-msg-sub">Job conversations</p></div>
+          <div class="grow"></div>
+          <button class="iconbtn" id="r-msg-refresh" type="button"><svg width="20" height="20"><use href="#i-repeat"/></svg></button>
+        </div>
+        <div class="pad">
+          <div class="r-searchbar">
+            <svg width="20" height="20"><use href="#i-search"/></svg>
+            <input id="r-msg-search" placeholder="Search customer or job ID" autocomplete="off">
+          </div>
+          <div id="r-thread-list"></div>
+        </div>
+      </div>
+
+      <div class="screen noscroll" id="scr-r-chat">
+        <div class="sb-space"></div>
+        <div class="chatwrap">
+          <div class="chathead">
+            <button class="iconbtn ghost" data-back type="button"><svg width="22" height="22"><use href="#i-back"/></svg></button>
+            <div class="avatar" style="width:44px;height:44px;font-size:15px" id="r-ch-avatar">AL</div>
+            <div class="grow">
+              <h1 id="r-ch-name">Customer</h1>
+              <div class="online" id="r-ch-status">Job conversation</div>
+            </div>
+            <button class="iconbtn" id="r-ch-call" type="button"><svg width="20" height="20"><use href="#i-phone"/></svg></button>
+          </div>
+          <div class="r-demo-banner" id="r-ch-banner"><svg width="14" height="14"><use href="#i-alert"/></svg>Demo thread — messages stay on this device.</div>
+          <div class="msgarea" id="r-ch-msgs"></div>
+          <div class="quickreplies" id="r-ch-quick"></div>
+          <div class="chatinput">
+            <input class="input" id="r-ch-input" placeholder="Message the customer…" autocomplete="off">
+            <button class="sendbtn" id="r-ch-send" type="button"><svg width="20" height="20"><use href="#i-send"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen with-rnav r-tint" id="scr-r-history">
+        <div class="sb-space"></div>
+        <div class="header">
+          <div class="r-headtitle"><h1 style="font-size:26px">Delivery history</h1><p id="r-hist-sub">Completed and cancelled runs</p></div>
+          <div class="grow"></div>
+          <button class="iconbtn" id="r-hist-earn" type="button"><svg width="20" height="20"><use href="#i-wallet"/></svg></button>
+        </div>
+        <div class="pad">
+          <div class="scrollx" id="r-hist-filters">
+            <button class="filterchip active" type="button" data-r-hist="all">All</button>
+            <button class="filterchip" type="button" data-r-hist="delivered">Delivered</button>
+            <button class="filterchip" type="button" data-r-hist="cancelled">Cancelled</button>
+          </div>
+          <div id="r-hist-summary"></div>
+          <div id="r-hist-list"></div>
+        </div>
+      </div>
+
+      <div class="screen" id="scr-r-earnings">
+        <div class="sb-space"></div>
+        <div class="header">
+          <button class="iconbtn ghost" data-back type="button"><svg width="22" height="22"><use href="#i-back"/></svg></button>
+          <div class="r-headtitle"><h1 style="font-size:24px">Earnings</h1><p id="r-earn-sub">Tips and payouts</p></div>
+          <div class="grow"></div>
+        </div>
+        <div id="r-earn-body"></div>
+      </div>
+
+      <div class="screen with-rnav r-tint" id="scr-r-profile">
+        <div class="sb-space"></div>
+        <div class="header">
+          <h1 style="font-size:26px;padding-left:4px">Runner profile</h1>
+          <div class="grow"></div>
+          <button class="iconbtn hasnews" id="r-prof-bell" type="button"><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        </div>
+        <div id="r-profile-top"></div>
+        <div class="pad menulist" id="r-profile-menu"></div>
+        <div class="smallnote">Runner workspace &middot; Demo data stored on this device<br>Base pay and real payouts require the production API</div>
+      </div>
+
+      <div class="notifpanel" id="notifpanel">
+        <div class="nhead">
+          <h3>Notifications</h3>
+          <button class="link" id="n-readall">Mark all read</button>
+        </div>
+        <div class="notiflist" id="notiflist"></div>
+      </div>
+
+      <div class="navpill" id="navpill" style="display:none">
+        <button class="navitem" data-nav="home"><span class="navico"><svg width="23" height="23"><use href="#i-home"/></svg></span><span>Home</span></button>
+        <button class="navitem" data-nav="requests"><span class="navico"><svg width="23" height="23"><use href="#i-box"/></svg></span><span>Request</span></button>
+        <button class="navitem" data-nav="activity"><span class="navico"><svg width="23" height="23"><use href="#i-history"/></svg></span><span>Activity</span></button>
+        <button class="navitem" data-nav="profile"><span class="navico"><svg width="23" height="23"><use href="#i-user-round"/></svg></span><span>Profile</span></button>
+      </div>
+
+      <div class="runnernav" id="runnernav">
+        <button class="rnavitem" type="button" data-rnav="r-dash"><span class="rnavico"><svg width="22" height="22"><use href="#i-home"/></svg></span><span>Dashboard</span></button>
+        <button class="rnavitem" type="button" data-rnav="r-available"><span class="rnavico"><svg width="22" height="22"><use href="#i-box"/></svg></span><span>Requests</span></button>
+        <button class="rnavitem" type="button" data-rnav="r-active"><span class="rnavico"><svg width="22" height="22"><use href="#i-run"/></svg></span><span>Active</span></button>
+        <button class="rnavitem" type="button" data-rnav="r-messages"><span class="rnavico"><svg width="22" height="22"><use href="#i-chat"/></svg></span><span>Messages</span><i class="rnavdot" id="r-nav-unread"></i></button>
+        <button class="rnavitem" type="button" data-rnav="r-history"><span class="rnavico"><svg width="22" height="22"><use href="#i-history"/></svg></span><span>History</span></button>
+        <button class="rnavitem" type="button" data-rnav="r-profile"><span class="rnavico"><svg width="22" height="22"><use href="#i-user-round"/></svg></span><span>Profile</span></button>
+      </div>
+
+      <div class="sheet-backdrop" id="sheetBackdrop"></div>
+      <div class="sheet" id="sheet"><div class="grab"></div><div class="sheetbody" id="sheetBody"></div></div>
+
+      <div class="overlay-center" id="callOverlay">
+        <div class="modal">
+          <div class="callavatar"><div class="avatar" id="call-avatar">JD</div></div>
+          <h3 id="call-name">Juan Dela Cruz</h3>
+          <div class="calldur" id="call-timer">00:00</div>
+          <p id="call-sub">Knights Courier &middot; On the way to you</p>
+          <div class="callbtns">
+            <button class="callbtn mute" id="call-mute"><svg width="24" height="24"><use href="#i-mic"/></svg></button>
+            <button class="callbtn end" id="call-end"><svg width="24" height="24" style="transform:rotate(135deg)"><use href="#i-phone"/></svg></button>
+            <button class="callbtn mute" id="call-vol"><svg width="24" height="24"><use href="#i-vol"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"><svg width="18" height="18"><use href="#i-check-c"/></svg><span id="toast-msg">Done</span></div>
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+  <div class="stage-caption">
+    <b>Knights Delivery — High-Fidelity Interactive Prototype</b>
+    <span>Everything is clickable: create a request, track the courier live, chat, pay, rate &middot; <a href="index.html">View the desktop version</a></span>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="runner.js"></script>
+</body>
+</html>

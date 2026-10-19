@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Knights Delivery — Desktop Prototype</title>
+<script>if(window.matchMedia("(max-width:760px)").matches)location.replace("mobile.html"+location.hash);</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="desktop.css">
+</head>
+<body class="desk">
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 10.9 12 4.1l8.4 6.8"/><path d="M5.9 9.6v9.5a1.4 1.4 0 0 0 1.4 1.4h9.4a1.4 1.4 0 0 0 1.4-1.4V9.6"/><path d="M9.8 20.5v-4.6a2.2 2.2 0 0 1 4.4 0v4.6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 7.7 4v8.8l-7.7 4-7.7-4V7.6Z"/><path d="m4.3 7.6 7.7 4 7.7-4"/><path d="M12 11.6v8.8"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 12a8.8 8.8 0 1 0 2.6-6.2L3.2 8.2"/><path d="M3.2 3.6v4.6h4.6"/><path d="M12 7.8v4.4l2.9 1.8"/></symbol>
+  <symbol id="i-user-round" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.9"/><path d="M4.8 20.4c1.5-3.1 4.1-4.7 7.2-4.7s5.7 1.6 7.2 4.7"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.1 9.7a5.9 5.9 0 1 1 11.8 0c0 3.9 1.5 5.3 1.5 5.3H4.6s1.5-1.4 1.5-5.3Z"/><path d="M10.2 18.9a1.9 1.9 0 0 0 3.6 0"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.7"/><path d="m20.2 20.2-3.7-3.7"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.4 12H5"/><path d="m11.2 5.3-6.7 6.7 6.7 6.7"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9.3 4.9 7.1 7.1-7.1 7.1"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4.9 9.3 7.1 7.1 7.1-7.1"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.4s6.9-5.6 6.9-11.3a6.9 6.9 0 1 0-13.8 0C5.1 15.8 12 21.4 12 21.4Z"/><circle cx="12" cy="9.9" r="2.6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.4V12l3 1.8"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4 14.6 8.8 20.5 9.6 16.2 13.7 17.2 19.6 12 17.1 6.8 19.6 7.8 13.7 3.5 9.6 9.4 8.8Z"/></symbol>
+  <symbol id="i-star-fill" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3.2 14.7 8.7 20.8 9.6 16.4 13.9 17.4 20 12 17 6.6 20 7.6 13.9 3.2 9.6 9.3 8.7Z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.2 3.9h3.6l1.7 4.7-2.2 1.7a12.6 12.6 0 0 0 5.4 5.4l1.7-2.2 4.7 1.7v3.6a2.1 2.1 0 0 1-2.3 2.1A17 17 0 0 1 3.1 6.2a2.1 2.1 0 0 1 2.1-2.3Z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 11.9a8.3 8.3 0 0 1-8.3 8.3c-1.5 0-3-.4-4.2-1.1L3.2 20.8l1.7-5.2a8.3 8.3 0 1 1 15.9-3.7Z"/><path d="M8.4 12h.01M12.4 12h.01M16.4 12h.01"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m6.4 6.4 11.2 11.2M17.6 6.4 6.4 17.6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5.3v13.4M5.3 12h13.4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5.2 12.6 4.5 4.5L18.8 6.9"/></symbol>
+  <symbol id="i-check-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="m8.4 12.3 2.4 2.4 4.9-5.2"/></symbol>
+  <symbol id="i-x-c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/></symbol>
+  <symbol id="i-burger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 10.4a7.6 7.6 0 0 1 15.2 0Z"/><path d="M4 12.6h16"/><path d="M4.6 15.1c0 2.8 3.3 4.9 7.4 4.9s7.4-2.1 7.4-4.9Z"/></symbol>
+  <symbol id="i-backpack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 6.6V4.4a2.4 2.4 0 0 1 4.8 0v2.2"/><path d="M5.4 9.6a8 8 0 0 1 13.2 0v8.6a1.6 1.6 0 0 1-1.6 1.6H7a1.6 1.6 0 0 1-1.6-1.6Z"/><path d="M9 14.6h6v2.9a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5Z"/></symbol>
+  <symbol id="i-run" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="14.4" cy="4.6" r="1.9"/><path d="M14.1 7.4 12.7 13"/><path d="M13.6 8.6l3.6 2"/><path d="m13.9 8.3-2.5 1.9"/><path d="m12.7 13 2.6 2.6-1 4.1"/><path d="M12.7 13 10 15.1 7.7 18"/><rect x="16.4" y="8.2" width="5" height="5" rx="1.2"/><path d="M18.9 8.2v5"/></symbol>
+  <symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V4.6a.8.8 0 0 1 .8-.8h8.4a.8.8 0 0 1 .8.8V8"/><rect x="3.4" y="8" width="17.2" height="8" rx="2.2"/><path d="M7 16v4.2h10V16"/><path d="M9.6 18.4h4.8"/><path d="M17.4 11.4h.01"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.4 7.2V6a1.8 1.8 0 0 0-1.8-1.8H5.6A2.6 2.6 0 0 0 3 6.8v10.4a2.6 2.6 0 0 0 2.6 2.6h11.8a2.6 2.6 0 0 0 2.6-2.6v-7.4A2.6 2.6 0 0 0 17.4 7.2H5.6A2.6 2.6 0 0 1 3 6.8"/><path d="M16.6 13.2h.01"/></symbol>
+  <symbol id="i-cash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="6.4" width="18.8" height="11.2" rx="2"/><circle cx="12" cy="12" r="2.7"/><path d="M6.2 9.6v4.8M17.8 9.6v4.8"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="5.4" width="18.8" height="13.2" rx="2.4"/><path d="M2.6 10h18.8"/><path d="M6.2 14.8h4.2"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.8 12.2V20a1 1 0 0 1-1 1H5.2a1 1 0 0 1-1-1v-7.8"/><path d="M2.8 7.9h18.4v3.1a1.2 1.2 0 0 1-1.2 1.2H4a1.2 1.2 0 0 1-1.2-1.2Z"/><path d="M12 7.9V21"/><path d="M12 7.9C10.1 7.9 6.7 8.1 6.7 5.5c0-2.2 2.2-2.9 3.4-1.4C11.3 5.6 12 7.9 12 7.9Zm0 0c1.9 0 5.3.2 5.3-2.4 0-2.2-2.2-2.9-3.4-1.4C12.7 5.6 12 7.9 12 7.9Z"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 2.8h11.6v18.5l-2.3-1.5-1.9 1.4-1.6-1.4-1.6 1.4-1.9-1.4-2.3 1.5Z"/><path d="M9.4 7.6h5.2M9.4 11.2h5.2"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16.8 2.6 4 4-4 4"/><path d="M3 11.7v-1.1a4 4 0 0 1 4-4h13.8"/><path d="m7.2 21.4-4-4 4-4"/><path d="M21 12.3v1.1a4 4 0 0 1-4 4H3.2"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 20.2H4.3l1.1-4.1L16.7 4.8a2.3 2.3 0 0 1 3.3 3.3L8.7 19.2"/><path d="m14.6 6.9 3.3 3.3"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h8.7M17.3 7H20"/><circle cx="15" cy="7" r="2.3"/><path d="M4 12h3.7M12.3 12H20"/><circle cx="10" cy="12" r="2.3"/><path d="M4 17h10.7M19.3 17H20"/><circle cx="17" cy="17" r="2.3"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.2 20.8H5.6a2.4 2.4 0 0 1-2.4-2.4V5.6a2.4 2.4 0 0 1 2.4-2.4h3.6"/><path d="m15.8 16.8 4.8-4.8-4.8-4.8"/><path d="M20.6 12H9.4"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.4c-.8.3-1 1-1 1.7"/><path d="M12 16.6h.01"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.6A8.6 8.6 0 1 1 9.4 3.6a7 7 0 0 0 11 11Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2.3M12 18.9v2.3M2.8 12h2.3M18.9 12h2.3M5.5 5.5l1.6 1.6M16.9 16.9l1.6 1.6M18.5 5.5l-1.6 1.6M7.1 16.9l-1.6 1.6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.6s7.8-3.4 7.8-9.7V5.6L12 2.4 4.2 5.6v6.3c0 6.3 7.8 9.7 7.8 9.7Z"/><path d="m9 11.4 2.1 2.1 4-4.3"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 2.6-7 19.8-3.9-8.9-8.9-3.9Z"/><path d="M21.4 2.6 10.5 13.5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 12S6.1 5.6 12 5.6 21.4 12 21.4 12 17.9 18.4 12 18.4 2.6 12 2.6 12Z"/><circle cx="12" cy="12" r="2.7"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.6 12S6.1 5.6 12 5.6c1.6 0 3.1.4 4.4 1.1M21.4 12S17.9 18.4 12 18.4c-1.6 0-3.1-.4-4.4-1.1"/><path d="M9.8 9.8a3.1 3.1 0 0 0 4.4 4.4"/><path d="m4.2 4.2 15.6 15.6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 7h15.6"/><path d="M9.4 7V4.7h5.2V7"/><path d="m6.4 7 1 13.3h9.2l1-13.3"/><path d="M10.2 11v5.6M13.8 11v5.6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="M12 7.6V13"/><path d="M12 16.4h.01"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.4" width="18" height="13.2" rx="2.2"/><path d="m3.4 7.4 8.6 5.7 8.6-5.7"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.6" y="10.6" width="14.8" height="9.8" rx="2.4"/><path d="M8.2 10.6V8a3.8 3.8 0 0 1 7.6 0v2.6"/><path d="M12 14.6v2.4"/></symbol>
+  <symbol id="i-moto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.8" cy="17.2" r="2.9"/><circle cx="18.2" cy="17.2" r="2.9"/><path d="M8.7 17.2h6.6"/><path d="M15.3 17.2 17.6 8.5h1.9"/><path d="m8.7 13.8 2.9-5.3h3.7"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9.2" y="2.6" width="5.6" height="11.2" rx="2.8"/><path d="M6.6 11a5.4 5.4 0 0 0 10.8 0"/><path d="M12 16.4V19.8"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.2 9.4v5.2h3.4l4.6 3.6V5.8L7.6 9.4Z"/><path d="M15.7 9.4a3.9 3.9 0 0 1 0 5.2"/><path d="M18.3 6.8a7.7 7.7 0 0 1 0 10.4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.4 1.9 5.5 5.5 1.9-5.5 1.9-1.9 5.5-1.9-5.5-5.5-1.9 5.5-1.9Z"/><path d="m18.6 16.2.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v11.4"/><path d="m7.3 9.9 4.7 4.7 4.7-4.7"/><path d="M4.2 20.6h15.6"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20.7 11l-8.7 8.2v-4.9c-4.9 0-7.8 1.4-9.2 4.9C2.7 12 6.2 7.6 12 7.6Z"/></symbol>
+  <symbol id="i-google" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.9 12A8.9 8.9 0 1 0 16.1 19.5"/><path d="M12.2 12h8.7"/></symbol>
+  <symbol id="i-facebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.8"/><path d="M16 20.9V8.5a3 3 0 0 0-3-3h-.8"/><path d="M11.3 11.5h6.4"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.8 19.4 6.2v6c0 4.5-3.2 7.3-7.4 8.4-4.2-1.1-7.4-3.9-7.4-8.4v-6Z"/><path d="M9.8 8.6v6.8"/><path d="M14.8 8.6 10.6 12l4.2 3.4"/></symbol>
+</svg>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brandmark"><svg width="27" height="27"><use href="#i-logo"/></svg></div>
+      <div><b>Knights</b><span>Delivery</span></div>
+    </div>
+    <nav class="sidenav">
+      <button class="side-item active" data-page="home"><svg width="21" height="21"><use href="#i-home"/></svg>Home</button>
+      <button class="side-item" data-page="create"><svg width="21" height="21"><use href="#i-plus"/></svg>Create Request</button>
+      <button class="side-item" data-page="requests"><svg width="21" height="21"><use href="#i-box"/></svg>My Requests<span class="sidecount" id="sideCount" style="display:none">0</span></button>
+      <button class="side-item" data-page="activity"><svg width="21" height="21"><use href="#i-history"/></svg>Activity</button>
+      <button class="side-item" data-page="tracking"><svg width="21" height="21"><use href="#i-run"/></svg>Live Tracking</button>
+      <button class="side-item" data-page="profile"><svg width="21" height="21"><use href="#i-user-round"/></svg>Profile</button>
+    </nav>
+    <div class="sidenote">
+      <b>Working prototype</b>
+      Post a request and watch it get picked up, delivered and rated — live.
+    </div>
+    <div class="side-foot">
+      <div class="side-user" id="sideUser" data-page="profile">
+        <div class="avatar" id="sideAvatar">JJ</div>
+        <div><b id="sideName">Jude Jude</b><small>Student · ADNU</small></div>
+      </div>
+      <button class="themebtn" id="themeToggle"><svg width="18" height="18"><use href="#i-moon"/></svg><span id="themeLabel">Dark mode</span></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">Home</h1>
+        <p id="pageSub">Get it. Delivered on campus.</p>
+      </div>
+      <div class="top-actions">
+        <button class="searchpill" id="openSearch" style="display:none">
+          <svg width="19" height="19"><use href="#i-search"/></svg>
+          What do you need?
+          <kbd>Ctrl K</kbd>
+        </button>
+        <button class="iconbtn hasnews" id="bellBtn"><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
+        <button class="btn btn-primary btn-sm" id="topCreate" style="width:auto"><svg width="18" height="18"><use href="#i-plus"/></svg>Create Request</button>
+      </div>
+    </header>
+
+    <div class="viewport">
+
+      <section class="page active" id="page-home">
+        <div class="greetrow">
+          <div>
+            <h1 id="homeGreet">Hey Jude 👋</h1>
+            <div class="locline"><svg width="17" height="17"><use href="#i-pin"/></svg>Ateneo De Naga University</div>
+          </div>
+        </div>
+        <button class="hero-search" id="homeSearch">
+          <svg width="21" height="21"><use href="#i-search"/></svg>
+          What do you need? Try “lechon manok” or “photocopy”
+          <kbd>Ctrl K</kbd>
+        </button>
+        <div class="catgrid" id="catGrid">
+          <div class="catcard c-food" data-cat="food"><span class="cic"><svg width="27" height="27"><use href="#i-burger"/></svg></span><div><b>Food</b><small>Meals, snacks &amp; drinks</small></div></div>
+          <div class="catcard c-supplies" data-cat="supplies"><span class="cic"><svg width="27" height="27"><use href="#i-backpack"/></svg></span><div><b>Supplies</b><small>School &amp; personal items</small></div></div>
+          <div class="catcard c-errands" data-cat="errands"><span class="cic"><svg width="27" height="27"><use href="#i-run"/></svg></span><div><b>Errands</b><small>Pickups &amp; quick tasks</small></div></div>
+          <div class="catcard c-printing" data-cat="printing"><span class="cic"><svg width="27" height="27"><use href="#i-printer"/></svg></span><div><b>Printing</b><small>Print, copy &amp; thesis</small></div></div>
+        </div>
+        <div class="cols">
+          <div>
+            <div class="promo" id="homePromo" style="margin:0 0 20px">
+              <button class="pclose" id="promoClose"><svg width="12" height="12"><use href="#i-close"/></svg></button>
+              <div class="pic"><svg width="23" height="23"><use href="#i-gift"/></svg></div>
+              <div class="grow">
+                <h4>Free delivery on request #1</h4>
+                <p>Use code <b>KNIGHT1</b> at checkout</p>
+              </div>
+              <button class="claim" id="promoClaim">Order now</button>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h2>Recent Orders <svg width="18" height="18"><use href="#i-clock"/></svg></h2>
+                <button class="link" id="homeSeeAll">See all <svg width="14" height="14" style="vertical-align:-2px"><use href="#i-chev-r"/></svg></button>
+              </div>
+              <div id="recentList"></div>
+            </div>
+          </div>
+          <div>
+            <div id="liveCard"></div>
+            <div class="panel">
+              <div class="panel-head"><h2>Need help?</h2></div>
+              <p style="font-size:13px;font-weight:700;color:var(--muted);line-height:1.55;margin-bottom:14px">Chat with Knight Support, call the hotline, or browse FAQs — we're here 8am to 8pm.</p>
+              <div style="display:flex;gap:10px">
+                <button class="minibtn primary" data-act="support" style="flex:1;padding:11px 16px">Chat with support</button>
+                <button class="minibtn" data-act="faq" style="padding:11px 16px">FAQs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-create">
+        <div class="formcols">
+          <div class="panel">
+            <div class="panel-head" style="margin-bottom:14px"><h2>What do you need?</h2></div>
+            <div class="catrow" id="createCats" style="margin-top:0">
+              <div class="cat c-food" data-cat="food"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-burger"/></svg><span>Food</span></div>
+              <div class="cat c-supplies" data-cat="supplies"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-backpack"/></svg><span>Supplies</span></div>
+              <div class="cat c-errands" data-cat="errands"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-run"/></svg><span>Errands</span></div>
+              <div class="cat c-printing" data-cat="printing"><span class="catcheck"><svg width="11" height="11"><use href="#i-check"/></svg></span><svg width="32" height="32"><use href="#i-printer"/></svg><span>Printing</span></div>
+            </div>
+            <div class="field">
+              <label>Items description <span class="req">*</span></label>
+              <textarea class="input" id="cs-items" rows="3" placeholder="e.g 2 pcs. lechon manok, 1 rice"></textarea>
+              <div class="hint" id="cs-items-hint">Tell us what to get or do.</div>
+            </div>
+            <div class="field">
+              <label>Category <span class="req">*</span></label>
+              <div class="selectrow" id="cs-catbtn">
+                <div class="tile t-neutral" id="cs-cattile" style="width:42px;height:42px;border-radius:13px"><svg width="21" height="21"><use href="#i-box"/></svg></div>
+                <div class="grow ph" id="cs-catlabel">Select a category</div>
+                <svg class="chev" width="20" height="20"><use href="#i-chev-d"/></svg>
+              </div>
+              <div class="hint" id="cs-cat-hint">Please pick a category.</div>
+            </div>
+            <div class="field">
+              <label>Drop-off location <span class="req">*</span></label>
+              <div class="inputwrap">
+                <span class="lead"><svg width="21" height="21"><use href="#i-pin"/></svg></span>
+                <input class="input has-lead" id="cs-drop" placeholder="e.g Phelan P217 Lab (2nd Floor)">
+              </div>
+              <div class="chips" id="cs-dropchips"></div>
+              <div class="hint" id="cs-drop-hint">Where should we deliver it?</div>
+            </div>
+            <div class="field">
+              <label>Preferred time <span class="req">*</span></label>
+              <div class="selectrow" id="cs-timebtn">
+                <div class="tile t-neutral" style="width:42px;height:42px;border-radius:13px"><svg width="21" height="21"><use href="#i-clock"/></svg></div>
+                <div class="grow" id="cs-timelabel">Today, 6:00pm – 6:30pm</div>
+                <svg class="chev" width="20" height="20"><use href="#i-chev-r"/></svg>
+              </div>
+            </div>
+            <div class="field">
+              <label>Notes <span style="color:var(--muted);font-weight:700">(optional)</span></label>
+              <textarea class="input" id="cs-notes" rows="2" placeholder="e.g Please get extra chilli oil. Thanks!"></textarea>
+            </div>
+          </div>
+          <div class="stickycol">
+            <div class="panel">
+              <div class="panel-head"><h2>Order setup</h2></div>
+              <div class="field" style="margin-top:4px">
+                <label>Payment method</label>
+                <div class="payseg" id="paySeg">
+                  <button data-pay="GCash"><svg width="17" height="17"><use href="#i-wallet"/></svg>GCash</button>
+                  <button data-pay="Cash on Delivery"><svg width="17" height="17"><use href="#i-cash"/></svg>Cash</button>
+                  <button data-pay="Maya"><svg width="17" height="17"><use href="#i-card"/></svg>Maya</button>
+                </div>
+              </div>
+              <div class="switchline" style="margin-top:12px">
+                <div class="sic" style="background:var(--yellow-pale);color:var(--yellow-ink)"><svg width="20" height="20"><use href="#i-run"/></svg></div>
+                <div><b>Express delivery</b><p>Rush in 30–45 min · +₱15</p></div>
+                <button class="toggle" id="cs-express" style="margin-left:auto"></button>
+              </div>
+              <div class="feebox">
+                <div><small>Estimated delivery fee</small><b id="cs-fee">₱20 – ₱30</b></div>
+                <svg width="26" height="26" style="color:var(--yellow-ink)"><use href="#i-receipt"/></svg>
+              </div>
+              <button class="btn btn-primary" id="cs-post" style="margin-top:18px"><svg width="19" height="19"><use href="#i-box"/></svg>Post Request</button>
+              <p class="smallnote">Free cancellation until a courier picks up your items.</p>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h2>Why Knights?</h2></div>
+              <div class="mrowz"><span class="mic"><svg width="20" height="20"><use href="#i-run"/></svg></span><div class="grow"><b>Live tracking, no map needed</b><small>Step-by-step journey &amp; arrival countdown</small></div></div>
+              <div class="mrowz"><span class="mic"><svg width="20" height="20"><use href="#i-shield"/></svg></span><div class="grow"><b>Secure PIN handoff</b><small>Only you can confirm the drop-off</small></div></div>
+              <div class="mrowz"><span class="mic"><svg width="20" height="20"><use href="#i-chat"/></svg></span><div class="grow"><b>Chat &amp; call the courier</b><small>Built into every order</small></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-requests">
+        <div class="tabs" id="reqTabs">
+          <button class="filterchip active" data-tab="ongoing">Ongoing</button>
+          <button class="filterchip" data-tab="completed">Completed</button>
+          <button class="filterchip" data-tab="cancelled">Cancelled</button>
+        </div>
+        <div class="panel" id="reqList"></div>
+      </section>
+
+      <section class="page" id="page-activity">
+        <div class="statgrid" id="statGrid"></div>
+        <div class="panel chartcard" id="chartPanel"></div>
+        <div class="tabs" id="actTabs">
+          <button class="filterchip active" data-tab="all">All</button>
+          <button class="filterchip" data-tab="ongoing">Ongoing</button>
+          <button class="filterchip" data-tab="completed">Completed</button>
+          <button class="filterchip" data-tab="cancelled">Cancelled</button>
+        </div>
+        <div class="panel" style="padding-bottom:10px">
+          <div class="thead"><span>Order</span><span>Category</span><span>Status</span><span>Date</span><span>Total</span><span></span></div>
+          <div id="actList"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-tracking">
+        <div class="trackgrid">
+          <div>
+            <div class="hero" id="tr-hero"></div>
+            <div class="journey">
+              <div class="jhead">
+                <h2>Live journey</h2>
+                <span class="livechip" id="tr-livechip"><span class="pulse-dot"></span>LIVE</span>
+              </div>
+              <div class="stepper" id="tr-steps"></div>
+              <div class="feedline" id="tr-feed"><svg width="17" height="17"><use href="#i-spark"/></svg><span id="tr-feedtext">Waiting for updates…</span></div>
+            </div>
+          </div>
+          <div>
+            <div id="tr-courier"></div>
+            <div class="pin-card" id="tr-pin">
+              <div class="pic"><svg width="24" height="24"><use href="#i-shield"/></svg></div>
+              <div class="grow">
+                <h4>Delivery PIN</h4>
+                <p>Show this to your courier at handoff</p>
+              </div>
+              <div class="pindigits" id="tr-pindigits"></div>
+              <button class="eyebtn" id="tr-pineye"><svg width="22" height="22"><use href="#i-eye"/></svg></button>
+            </div>
+            <div id="tr-summary"></div>
+            <div class="track-actions" id="tr-actions"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-profile">
+        <div class="profilegrid">
+          <div class="profilehero">
+            <div class="avatar" id="pfAvatar">JJ</div>
+            <div class="grow">
+              <h2 id="pfName">Jude Jude</h2>
+              <p>Student · Ateneo de Naga University</p>
+              <div class="chips">
+                <span class="pchip"><svg width="13" height="13"><use href="#i-receipt"/></svg><span id="pfSid">2023-10482</span></span>
+                <span class="pchip"><svg width="13" height="13"><use href="#i-mail"/></svg><span id="pfEmail">jude@adnu.edu.ph</span></span>
+                <span class="pchip"><svg width="13" height="13"><use href="#i-phone"/></svg><span id="pfPhone">+63 917 555 4821</span></span>
+              </div>
+            </div>
+            <button class="editbtn" id="pfEditBtn"><svg width="17" height="17"><use href="#i-edit"/></svg>Edit profile</button>
+          </div>
+
+          <div class="panel hidden" id="pfEditPanel">
+            <div class="panel-head"><h2>My information</h2></div>
+            <div class="field"><label>Full name</label><input class="input" id="mi-name"></div>
+            <div class="field"><label>Student ID</label><input class="input" id="mi-sid"></div>
+            <div class="field"><label>Email</label><input class="input" id="mi-email"></div>
+            <div class="field"><label>Phone</label><input class="input" id="mi-phone"></div>
+            <div style="display:flex;gap:10px;margin-top:18px">
+              <button class="btn btn-primary btn-sm" id="pfSave" style="width:auto;flex:1">Save changes</button>
+              <button class="btn btn-soft" id="pfCancel" style="flex:1">Cancel</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Payment methods</h2><button class="link" id="payAdd">+ Add new</button></div>
+            <div id="payList"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Addresses</h2></div>
+            <div id="addrList"></div>
+            <div style="display:flex;gap:10px;margin-top:16px">
+              <input class="input" id="addrNew" placeholder="e.g. SHS Building Room 204" style="flex:1">
+              <button class="btn btn-primary btn-sm" id="addrAddBtn" style="width:auto;padding:0 22px"><svg width="18" height="18"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Preferences</h2></div>
+            <div class="switchline"><div class="sic"><svg width="20" height="20"><use href="#i-bell"/></svg></div><div><b>Push notifications</b><p>Alerts for promos and news</p></div><button class="toggle" data-toggle="push" style="margin-left:auto"></button></div>
+            <div class="switchline"><div class="sic"><svg width="20" height="20"><use href="#i-box"/></svg></div><div><b>Order updates</b><p>Live status of your deliveries</p></div><button class="toggle" data-toggle="orderUpdates" style="margin-left:auto"></button></div>
+            <div class="switchline"><div class="sic"><svg width="20" height="20"><use href="#i-moon"/></svg></div><div><b>Dark mode</b><p>Easier on the eyes at night</p></div><button class="toggle" data-toggle="dark" style="margin-left:auto"></button></div>
+            <button class="dangerline" id="resetBtn"><svg width="20" height="20"><use href="#i-repeat"/></svg><b>Clear demo data &amp; restart</b></button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Help &amp; Support</h2></div>
+            <div class="helpbtns">
+              <button class="helpbtn" data-act="support"><span class="hic" style="background:var(--info-bg);color:var(--info)"><svg width="19" height="19"><use href="#i-chat"/></svg></span><span><b>Chat with support</b><small>Live agent, 2 min reply</small></span></button>
+              <button class="helpbtn" data-act="help-call"><span class="hic" style="background:var(--ok-bg);color:var(--ok)"><svg width="19" height="19"><use href="#i-phone"/></svg></span><span><b>Call hotline</b><small>+63 54 123 4567</small></span></button>
+              <button class="helpbtn" data-act="help-report"><span class="hic" style="background:var(--danger-bg);color:var(--danger)"><svg width="19" height="19"><use href="#i-alert"/></svg></span><span><b>Report an issue</b><small>Missing or late items</small></span></button>
+              <button class="helpbtn" data-act="help-faq"><span class="hic" style="background:var(--yellow-pale);color:var(--yellow-ink)"><svg width="19" height="19"><use href="#i-help"/></svg></span><span><b>FAQs</b><small>Fees, PIN &amp; refunds</small></span></button>
+            </div>
+            <div class="faq" id="faqList"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>Account</h2></div>
+            <div class="mrowz"><span class="mic"><svg width="20" height="20"><use href="#i-shield"/></svg></span><div class="grow"><b>Knights verified student</b><small>Your ADNU student ID is verified</small></div><span class="badge bg-ok">Verified</span></div>
+            <div class="mrowz"><span class="mic"><svg width="20" height="20"><use href="#i-receipt"/></svg></span><div class="grow"><b>Order history</b><small id="pfOrdersMeta">—</small></div><button class="minibtn" data-act="goto-activity">View</button></div>
+            <button class="dangerline" id="signOutBtn"><svg width="20" height="20"><use href="#i-logout"/></svg><b>Sign out</b></button>
+            <p class="smallnote">Knights Delivery v1.0 · Ateneo de Naga University</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div class="gate" id="gate">
+  <div class="gate-brand">
+    <img class="scene" src="building.png" alt="Ateneo de Naga University facade">
+    <div class="gate-copy">
+      <h1>Knights <span>Delivery</span></h1>
+      <p>Get it. Delivered on campus.</p>
+      <div class="gate-feats">
+        <span class="gate-feat"><svg width="17" height="17"><use href="#i-run"/></svg>Live courier tracking</span>
+        <span class="gate-feat"><svg width="17" height="17"><use href="#i-wallet"/></svg>Pay with GCash, Maya or cash</span>
+        <span class="gate-feat"><svg width="17" height="17"><use href="#i-chat"/></svg>Chat &amp; call your courier</span>
+      </div>
+    </div>
+  </div>
+  <div class="gate-form">
+    <div class="gate-card">
+      <div id="formLogin">
+        <div class="authlogo"><svg width="37" height="37"><use href="#i-logo"/></svg></div>
+        <h1>Welcome back!</h1>
+        <p class="authsub">Log in to your Knights Delivery account</p>
+        <div class="field">
+          <label>Email</label>
+          <div class="inputwrap">
+            <span class="lead"><svg width="21" height="21"><use href="#i-mail"/></svg></span>
+            <input class="input has-lead" id="lg-email" type="email" placeholder="juandelacruz@gbox.adnu.edu.ph" value="jude@adnu.edu.ph">
+          </div>
+          <div class="hint" id="lg-email-hint">Please enter a valid email.</div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="inputwrap">
+            <span class="lead"><svg width="21" height="21"><use href="#i-lock"/></svg></span>
+            <input class="input has-lead" id="lg-pass" type="password" placeholder="••••••••" value="knights123" style="padding-right:52px">
+            <span class="trail"><button class="iconbtn ghost" id="lg-eye" type="button" style="width:40px;height:40px"><svg width="20" height="20"><use href="#i-eye"/></svg></button></span>
+          </div>
+          <div class="hint" id="lg-pass-hint">Password must be at least 6 characters.</div>
+        </div>
+        <div style="text-align:right;margin-top:12px">
+          <button class="link" id="lg-forgot">Forgot password?</button>
+        </div>
+        <button class="btn btn-primary" id="lg-btn" style="margin-top:16px">Log In</button>
+        <div class="divider">OR CONTINUE WITH</div>
+        <div class="socialrow">
+          <button class="socbtn" data-social="Google"><svg width="20" height="20"><use href="#i-google"/></svg>Google</button>
+          <button class="socbtn" data-social="Facebook"><svg width="20" height="20"><use href="#i-facebook"/></svg>Facebook</button>
+        </div>
+        <div class="authfoot">New to Knights Delivery? <button class="link" id="toSignup">Sign Up</button></div>
+        <p class="gate-foot">Demo: any email &amp; password (6+ chars) will work.</p>
+      </div>
+      <div id="formSignup" class="hidden">
+        <div class="authlogo"><svg width="37" height="37"><use href="#i-logo"/></svg></div>
+        <h1>Create account</h1>
+        <p class="authsub">Join the Knight couriers network</p>
+        <div class="field">
+          <label>Full name</label>
+          <div class="inputwrap">
+            <span class="lead"><svg width="21" height="21"><use href="#i-user-round"/></svg></span>
+            <input class="input has-lead" id="su-name" type="text" placeholder="Juan Dela Cruz">
+          </div>
+          <div class="hint" id="su-name-hint">Please enter your full name.</div>
+        </div>
+        <div class="field">
+          <label>Student ID</label>
+          <div class="inputwrap">
+            <span class="lead"><svg width="21" height="21"><use href="#i-receipt"/></svg></span>
+            <input class="input has-lead" id="su-id" type="text" placeholder="2023-10482">
+          </div>
+          <div class="hint" id="su-id-hint">Student ID is required.</div>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <div class="inputwrap">
+            <span class="lead"><svg width="21" height="21"><use href="#i-mail"/></svg></span>
+            <input class="input has-lead" id="su-email" type="email" placeholder="juandelacruz@gbox.adnu.edu.ph">
+          </div>
+          <div class="hint" id="su-email-hint">Please enter a valid email.</div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="inputwrap">
+            <span class="lead"><svg width="21" height="21"><use href="#i-lock"/></svg></span>
+            <input class="input has-lead" id="su-pass" type="password" placeholder="At least 6 characters" style="padding-right:52px">
+            <span class="trail"><button class="iconbtn ghost" id="su-eye" type="button" style="width:40px;height:40px"><svg width="20" height="20"><use href="#i-eye"/></svg></button></span>
+          </div>
+          <div class="hint" id="su-pass-hint">Password must be at least 6 characters.</div>
+        </div>
+        <div class="checkline" id="su-terms">
+          <span class="checkbox"><svg width="13" height="13"><use href="#i-check"/></svg></span>
+          <p>I agree to the <b>Terms of Service</b> and <b>Privacy Policy</b> of Knights Delivery.</p>
+        </div>
+        <div class="hint" id="su-terms-hint">Please accept the terms to continue.</div>
+        <button class="btn btn-primary" id="su-btn" style="margin-top:16px">Create Account</button>
+        <div class="authfoot">Already have an account? <button class="link" id="toLogin">Log In</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notifpanel" id="notifpanel">
+  <div class="nhead">
+    <h3>Notifications</h3>
+    <button class="link" id="n-readall">Mark all read</button>
+  </div>
+  <div class="notiflist" id="notiflist"></div>
+</div>
+
+<div class="modal-wrap" id="searchModal">
+  <div class="search-modal">
+    <div class="sm-head">
+      <svg width="21" height="21"><use href="#i-search"/></svg>
+      <input id="searchInput" placeholder="Search food, supplies, printing…" autocomplete="off">
+      <kbd>Esc</kbd>
+      <button class="iconbtn ghost" data-closeall><svg width="20" height="20"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sm-body" id="searchBody"></div>
+  </div>
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h2 id="drawerTitle">Order details</h2>
+    <button class="iconbtn ghost" data-closeall><svg width="20" height="20"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<div class="drawer-backdrop" id="chatBackdrop"></div>
+<div class="drawer chat-drawer" id="chatDrawer">
+  <div class="chatwrap">
+    <div class="chathead">
+      <div class="avatar" style="width:44px;height:44px;font-size:15px" id="ch-avatar">JD</div>
+      <div class="grow">
+        <h1 id="ch-name">Juan Dela Cruz</h1>
+        <div class="online" id="ch-status">Online</div>
+      </div>
+      <button class="iconbtn" id="ch-call"><svg width="20" height="20"><use href="#i-phone"/></svg></button>
+      <button class="iconbtn ghost" data-closeall><svg width="20" height="20"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="msgarea" id="ch-msgs"></div>
+    <div class="quickreplies" id="ch-quick"></div>
+    <div class="chatinput">
+      <input class="input" id="ch-input" placeholder="Type a message…" autocomplete="off">
+      <button class="sendbtn" id="ch-send"><svg width="20" height="20"><use href="#i-send"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-wrap" id="dialogWrap">
+  <div class="dialog" id="dialogBody"></div>
+</div>
+
+<div class="overlay-center" id="callOverlay">
+  <div class="modal">
+    <div class="callavatar"><div class="avatar" id="call-avatar">JD</div></div>
+    <h3 id="call-name">Juan Dela Cruz</h3>
+    <div class="calldur" id="call-timer">00:00</div>
+    <p id="call-sub">Knights Courier · On the way to you</p>
+    <div class="callbtns">
+      <button class="callbtn mute" id="call-mute"><svg width="24" height="24"><use href="#i-mic"/></svg></button>
+      <button class="callbtn end" id="call-end"><svg width="24" height="24" style="transform:rotate(135deg)"><use href="#i-phone"/></svg></button>
+      <button class="callbtn mute" id="call-vol"><svg width="24" height="24"><use href="#i-vol"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg width="18" height="18"><use href="#i-check-c"/></svg><span id="toast-msg">Done</span></div>
+
+<script src="desktop.js"></script>
+</body>
+</html>
