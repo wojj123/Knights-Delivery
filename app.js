@@ -154,7 +154,7 @@ const LS_ORDERS = "kd.customer.orders.v1";
 function saveCustomer() {
   if (!state.loggedIn) return;
   try {
-    localStorage.setItem(LS_ORDERS, JSON.stringify({ owner: String(state.user.email || "").toLowerCase(), orders: state.orders }));
+    localStorage.setItem(LS_ORDERS, JSON.stringify({ owner: String(state.user.email || "").toLowerCase(), user: state.user, orders: state.orders }));
   } catch (err) {}
 }
 function restoreCustomerFor(email) {
@@ -163,6 +163,7 @@ function restoreCustomerFor(email) {
     const saved = raw ? JSON.parse(raw) : null;
     if (saved && Array.isArray(saved.orders) && saved.orders.length && String(saved.owner || "").toLowerCase() === String(email || "").toLowerCase()) {
       state.orders = saved.orders;
+      if (saved.user) state.user = Object.assign({}, state.user, saved.user, { email: saved.user.email || email });
       return;
     }
   } catch (err) {}
@@ -1318,6 +1319,7 @@ function bindSheets() {
       closeSheet();
       renderProfile();
       renderHome();
+      saveCustomer();
       toast("Profile updated", "i-check-c");
       return;
     }
@@ -1326,6 +1328,7 @@ function bindSheets() {
       if (o) { o.tip = rateDraft.tip || 20; toast("Tip sent to " + COURIER.name + " — thank you!", "i-cash"); }
       closeSheet();
       renderTracking();
+      saveCustomer();
       return;
     }
     if (t.closest("#rate-submit")) {
@@ -1347,7 +1350,13 @@ function bindSheets() {
     if (t.closest("#cancel-keep")) { closeSheet(); return; }
     if (t.closest("#so-yes")) { doSignOut(); return; }
     if (t.closest("#so-no")) { closeSheet(); return; }
-    if (t.closest("#set-reset")) { closeSheet(); toast("Resetting demo…", "i-repeat"); setTimeout(() => location.reload(), 700); return; }
+    if (t.closest("#set-reset")) {
+      closeSheet();
+      try { localStorage.removeItem(LS_ORDERS); localStorage.removeItem("kd.runner.v1"); } catch (err) {}
+      toast("Resetting demo…", "i-repeat");
+      setTimeout(() => location.reload(), 700);
+      return;
+    }
     const act = t.closest("[data-act]");
     if (act) {
       const a = act.dataset.act;
