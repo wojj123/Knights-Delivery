@@ -284,8 +284,6 @@ function updateBadges() {
   $$("#r-bell, #r-active-bell, #r-prof-bell").forEach((b) => b.classList.toggle("hasnews", has));
   const dot = $("#r-nav-unread");
   if (dot) dot.classList.toggle("show", unreadTotal() > 0);
-  const msgQuick = $("#r-q-msg");
-  if (msgQuick) msgQuick.textContent = unreadTotal() ? unreadTotal() + " unread" : "No unread";
 }
 
 function syncLinkedJobs() {
@@ -548,19 +546,11 @@ function renderDashboard() {
   if (avatar) avatar.textContent = who.initials;
   const mode = $("#scr-r-dash .r-modechip");
   if (mode) mode.classList.toggle("offline", !DB.online);
-  const available = availableJobs().length;
   const doneToday = DB.jobs.filter((j) => j.status === "delivered" && j.deliveredAt >= startOfDay(0)).length;
-  const reqQuick = $("#r-q-req");
-  if (reqQuick) reqQuick.textContent = available + " near you";
-  const msgQuick = $("#r-q-msg");
-  if (msgQuick && !unreadTotal()) msgQuick.textContent = "No unread";
-  const earnQuick = $("#r-q-earn");
-  if (earnQuick) earnQuick.textContent = "Tips & payouts";
   const hero = $("#r-dash-hero");
   if (hero) {
     hero.innerHTML = '<div class="r-online-card ' + (DB.online ? "" : "offline") + '">' +
-      '<div class="r-oc-top"><span class="r-statepill"><i></i>' + (DB.online ? "Online" : "Offline") + "</span>" +
-      '<span style="font-size:11.5px;font-weight:800;opacity:.7">' + doneToday + " done today</span></div>" +
+      '<div class="r-oc-top"><span style="font-size:11.5px;font-weight:800;opacity:.7">' + doneToday + " done today</span></div>" +
       "<h2>" + (DB.online ? "You are online" : "You are offline") + "</h2>" +
       '<p class="r-ocsub">' + (DB.online ? "Requests near the ADNU campus are showing up. Accept one when you are ready." : "Go online to receive new delivery requests.") + "</p>" +
       '<div class="r-oc-actions"><button class="r-oc-toggle ' + (DB.online ? "" : "go-online") + '" data-r-online="toggle">' + (DB.online ? "Go offline" : "Go online") + "</button></div></div>";
@@ -569,15 +559,14 @@ function renderDashboard() {
   const ah = $("#r-dash-active");
   if (ah) {
     if (!active) {
-      ah.innerHTML = '<div class="r-wallet"><div class="r-wtop"><h3>No active delivery</h3><span class="r-pill r-st-muted">Idle</span></div><p>Accept a nearby request to start a run. Your delivery status and customer chat appear here.</p><button class="r-btn-soft" style="width:100%;margin-top:12px" data-r-go="r-available"><svg width="17" height="17"><use href="#i-box"/></svg>Browse requests</button></div>';
+      ah.innerHTML = '<div class="r-wallet"><div class="r-wtop"><h3>No active delivery</h3></div><p>Accept a nearby request to start a run. Your delivery status and customer chat appear here.</p><button class="r-btn-soft" style="width:100%;margin-top:12px" data-r-go="r-available"><svg width="17" height="17"><use href="#i-box"/></svg>Browse requests</button></div>';
     } else {
       const meta = statusOf(active);
       ah.innerHTML = '<div class="r-activecard">' +
         '<div class="r-ac-top"><span class="r-pill ' + meta.pill + '">' + meta.label + '</span><span style="font-size:11.5px;font-weight:800;opacity:.7">' + esc(active.id) + "</span></div>" +
         "<h2>" + esc(active.title) + '</h2><div class="r-acid">' + esc(active.customer) + " · " + esc(active.dropoff) + "</div>" +
-        '<div class="r-progress"><div class="r-ptrack"><div class="r-pfill" style="width:' + meta.progress + '%"></div></div><div class="r-plabels"><span>' + meta.label + "</span><span>" + esc(active.window) + "</span></div></div></div>" +
-        '<div class="r-act-actions"><button class="r-btn-primary" data-r-resume="' + esc(active.id) + '"><svg width="18" height="18"><use href="#i-run"/></svg>Open active delivery</button>' +
-        '<button class="r-btn-soft" style="width:100%;margin-top:8px" data-r-act="chat" data-id="' + esc(active.id) + '"><svg width="17" height="17"><use href="#i-chat"/></svg>Message customer</button></div>';
+        '<div class="r-progress"><div class="r-ptrack"><div class="r-pfill" style="width:' + meta.progress + '%"></div></div><div class="r-plabels" style="justify-content:flex-end"><span>' + esc(active.window) + "</span></div></div></div>" +
+        '<div class="r-act-actions"><button class="r-btn-primary" data-r-resume="' + esc(active.id) + '"><svg width="18" height="18"><use href="#i-run"/></svg>Open active delivery</button></div>';
     }
   }
   const near = $("#r-dash-jobs");
@@ -586,8 +575,6 @@ function renderDashboard() {
     near.innerHTML = list.length ? list.map((j) => jobCardHTML(j, true)).join("") :
       '<div class="r-empty"><div class="resi"><svg width="34" height="34"><use href="#i-box"/></svg></div><h3>No requests nearby</h3><p>New runs appear here as soon as customers post them.</p></div>';
   }
-  const earn = $("#r-dash-earn");
-  if (earn) earn.innerHTML = "";
   updateBadges();
 }
 
@@ -799,7 +786,8 @@ function renderChat() {
         if (g !== lastDay) { head = '<div class="r-ch-day">' + g + "</div>"; lastDay = g; }
         if (m.from === "system") return head + '<div class="r-ch-sys">' + esc(m.text) + "</div>";
         const out = m.from === "me";
-        return head + '<div class="r-b' + (out ? "out" : "in") + '"><div class="r-bub">' + esc(m.text) + '</div><div class="r-bmeta">' + fmtT(new Date(m.ts)) + (out ? ' <svg width="12" height="12" style="vertical-align:-1px"><use href="#i-check"/></svg>' : "") + "</div></div>";
+        const stateMark = out ? (m.state === "sending" ? " · Sending…" : ' <svg width="12" height="12" style="vertical-align:-1px"><use href="#i-check"/></svg>') : "";
+        return head + '<div class="r-b' + (out ? "out" : "in") + '"><div class="r-bub">' + esc(m.text) + '</div><div class="r-bmeta">' + fmtT(new Date(m.ts)) + stateMark + "</div></div>";
       }).join("");
       requestAnimationFrame(() => { msgs.scrollTop = msgs.scrollHeight; });
     }

@@ -434,32 +434,22 @@
           <div class="r-modechip"><span class="r-livedot"></span>Runner mode</div>
           <div class="grow"></div>
           <button class="iconbtn hasnews" id="r-bell" type="button"><svg width="21" height="21"><use href="#i-bell"/></svg><span class="bell-dot"></span></button>
-          <button class="r-topavatar" id="r-top-profile" type="button">MS</button>
+          <button class="r-topavatar" id="r-top-profile" type="button" aria-label="Profile"></button>
         </div>
         <div class="pad">
           <div class="r-greet">
-            <h1 id="r-greet">Good afternoon, Mig</h1>
-            <p id="r-greet-sub">Here is your courier day at a glance.</p>
+            <h1 id="r-greet">Welcome</h1>
+            <p id="r-greet-sub"></p>
           </div>
           <div id="r-dash-hero"></div>
           <div id="r-dash-active"></div>
-          <div class="r-quickwrap">
-            <button class="r-quick" type="button" data-r-go="r-available">
-              <span class="r-qic q-navy"><svg width="21" height="21"><use href="#i-box"/></svg></span>
-              <b>Requests</b><small id="r-q-req">6 near you</small>
-            </button>
-            <button class="r-quick" type="button" data-r-go="r-messages">
-              <span class="r-qic q-info"><svg width="21" height="21"><use href="#i-chat"/></svg></span>
-              <b>Messages</b><small id="r-q-msg">No unread</small>
-            </button>
-            <button class="r-quick" type="button" data-r-go="r-earnings">
-              <span class="r-qic q-yellow"><svg width="21" height="21"><use href="#i-wallet"/></svg></span>
-              <b>Earnings</b><small id="r-q-earn">Tips today</small>
-            </button>
-          </div>
+          <button class="r-earnrow" type="button" data-r-go="r-earnings">
+            <span class="r-qic q-yellow"><svg width="21" height="21"><use href="#i-wallet"/></svg></span>
+            <span class="r-ermain"><b>Earnings</b><small>Tips &amp; payouts</small></span>
+            <svg class="r-erchev" width="16" height="16"><use href="#i-chev-r"/></svg>
+          </button>
           <div class="section r-sec"><h2>Nearby requests</h2><button class="seeall" type="button" data-r-go="r-available">See all <svg width="15" height="15"><use href="#i-chev-r"/></svg></button></div>
           <div id="r-dash-jobs"></div>
-          <div id="r-dash-earn"></div>
         </div>
       </div>
 
