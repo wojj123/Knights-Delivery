@@ -257,7 +257,7 @@ function ensureAccount() {
   persist();
 }
 
-const UI = { cat: "all", q: "", sort: "newest", hist: "all", period: "today", trackJob: null, chatJob: null, busy: null, loading: false, error: null };
+const UI = { cat: "all", q: "", sort: "newest", hist: "all", period: "today", trackJob: null, chatJob: null, busy: null, loading: false, error: null, lastAdvance: 0 };
 const MAIN_TABS = { "r-dash": 1, "r-available": 1, "r-active": 1, "r-messages": 1, "r-history": 1, "r-profile": 1 };
 
 function jobById(id) { return DB.jobs.find((j) => j.id === id); }
@@ -297,8 +297,8 @@ function syncLinkedJobs() {
         j = {
           id: o.id, cat: o.cat, title: o.title, items: o.items, shop: PICKUPS[o.cat] || "Campus pickup point",
           pickup: PICKUPS[o.cat] || "Campus pickup point", dropoff: o.dropoff, customer: KD.state.user.fullName,
-          customerInitials: initials(KD.state.user.fullName), customerRating: "4.9", customerPhone: KD.state.user.phone || "",
-          fee: o.fee || 25, tip: o.tip || 0, distance: 0.5, eta: 15, window: o.time, note: o.notes || "",
+          customerInitials: initials(KD.state.user.fullName), customerRating: "", customerPhone: KD.state.user.phone || "",
+          fee: o.fee || 25, tip: o.tip || 0, distance: 0, eta: 0, window: o.time, note: o.notes || "",
           pin: o.pin || "0000", status: "available", createdAt: o.createdTs || Date.now(), unread: 0, msgs: [],
           linked: true, linkedOrderId: o.id
         };
@@ -410,6 +410,9 @@ function advanceJob(id) {
   const meta = statusOf(j);
   if (!meta.next) return;
   if (meta.next === "delivered") { openDeliverConfirm(j); return; }
+  const now = Date.now();
+  if (now - UI.lastAdvance < 500) return;
+  UI.lastAdvance = now;
   j.status = meta.next;
   if (j.status === "picked_up") j.pickedAt = Date.now();
   addRunnerNotif("Status updated", j.id + " — " + statusOf(j).label, j.id);
@@ -439,7 +442,7 @@ function openDeliverConfirm(j) {
 
 function confirmDeliver(id) {
   const j = jobById(id);
-  if (!j) return;
+  if (!j || j.status === "delivered") return;
   const inputs = $$("#r-pininputs input");
   const pin = inputs.map((i) => i.value).join("");
   const ok = /^\d{4}$/.test(pin);
@@ -560,8 +563,7 @@ function renderDashboard() {
       '<span style="font-size:11.5px;font-weight:800;opacity:.7">' + doneToday + " done today</span></div>" +
       "<h2>" + (DB.online ? "You are online" : "You are offline") + "</h2>" +
       '<p class="r-ocsub">' + (DB.online ? "Requests near the ADNU campus are showing up. Accept one when you are ready." : "Go online to receive new delivery requests.") + "</p>" +
-      '<div class="r-oc-actions"><button class="r-oc-toggle ' + (DB.online ? "" : "go-online") + '" data-r-online="toggle">' + (DB.online ? "Go offline" : "Go online") + "</button>" +
-      '<button class="r-oc-ghost" data-r-go="r-earnings">Earnings</button></div></div>';
+      '<div class="r-oc-actions"><button class="r-oc-toggle ' + (DB.online ? "" : "go-online") + '" data-r-online="toggle">' + (DB.online ? "Go offline" : "Go online") + "</button></div></div>";
   }
   const active = activeJob();
   const ah = $("#r-dash-active");
@@ -812,6 +814,7 @@ function sendRunnerMessage(text, fromQuick) {
   j.msgs = j.msgs || [];
   const m = msg("me", t, Date.now());
   j.msgs.push(m);
+  if (j.linkedOrderId && KD.pushCustomerChat) KD.pushCustomerChat(j.linkedOrderId, t, m.ts);
   if (input && !fromQuick) input.value = "";
   renderChat();
   persist();
@@ -892,15 +895,12 @@ function renderProfile() {
   const who = me();
   const stats = myStats();
   const top = $("#r-profile-top");
-  const weekTips = tipsBetween(startOfDay(6), Date.now() + 1);
   if (top) {
     top.innerHTML = '<div class="r-profiletop"><div class="r-avatar">' + esc(who.initials) + "</div>" +
       "<div class='r-pinfo'><h2>" + esc(who.name) + "</h2><p>" + (who.sid ? "Student ID " + esc(who.sid) + " · " : "") + "Runner account</p>" +
       '<div class="r-pstats"><div class="r-pstat"><b>' + (stats.rating ? "★ " + stats.rating : "—") + "</b><small>" + (stats.rating ? "Rating" : "No ratings yet") + "</small></div><div class='r-pstat'><b>" + stats.done + "</b><small>Deliveries</small></div><div class='r-pstat'><b>" + stats.completion + "</b><small>Completion</small></div></div></div></div>";
   }
-  const statsHTML = '<div class="r-wallet"><div class="r-wtop"><h3>Performance</h3><span class="r-pill r-st-yellow">' + money(weekTips) + " tips this week</span></div>" +
-    '<div class="r-hrow"><div class="r-ostat"><b>' + stats.done + "</b><small>Completed</small></div><div class='r-ostat'><b>" + stats.cancelled + "</b><small>Cancelled</small></div><div class='r-ostat'><b>" + stats.completion + "</b><small>Completion</small></div></div></div>" +
-    '<div class="r-menugroup"><div class="r-kv"><span>Email</span><b>' + esc(who.email || "Not set") + '</b></div><div class="r-kv"><span>Student ID</span><b>' + esc(who.sid || "Not set") + '</b></div><div class="r-kv"><span>Phone</span><b>' + esc(who.phone || "Not set") + "</b></div></div>";
+  const statsHTML = '<div class="r-menugroup"><div class="r-kv"><span>Email</span><b>' + esc(who.email || "Not set") + '</b></div><div class="r-kv"><span>Student ID</span><b>' + esc(who.sid || "Not set") + '</b></div><div class="r-kv"><span>Phone</span><b>' + esc(who.phone || "Not set") + "</b></div></div>";
   const menu = $("#r-profile-menu");
   if (menu) {
     const groups = [
@@ -1247,6 +1247,24 @@ function boot() {
     if (v) onNav(v);
     else renderAll();
   }
+}
+
+if (window.KD) {
+  window.KD.customerMessage = function (orderId, text, ts) {
+    const j = DB.jobs.find((x) => x.linkedOrderId === orderId);
+    if (!j || !text) return;
+    j.msgs = j.msgs || [];
+    j.msgs.push(msg("them", text, ts || Date.now()));
+    j.unread = (j.unread || 0) + 1;
+    persist();
+    addRunnerNotif("Message from customer", j.id + " · " + j.customer + ": " + text, j.id);
+    if (UI.chatJob === j.id && $("#scr-r-chat").classList.contains("active")) {
+      j.unread = 0;
+      persist();
+      renderChat();
+    }
+    renderThreads();
+  };
 }
 
 window.KDRunner = { enter: enter, leave: leave, onNav: onNav };

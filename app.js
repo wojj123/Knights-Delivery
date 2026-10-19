@@ -150,6 +150,25 @@ const DEFAULTS = () => ({
 });
 
 let state = DEFAULTS();
+const LS_ORDERS = "kd.customer.orders.v1";
+function saveCustomer() {
+  if (!state.loggedIn) return;
+  try {
+    localStorage.setItem(LS_ORDERS, JSON.stringify({ owner: String(state.user.email || "").toLowerCase(), orders: state.orders }));
+  } catch (err) {}
+}
+function restoreCustomerFor(email) {
+  try {
+    const raw = localStorage.getItem(LS_ORDERS);
+    const saved = raw ? JSON.parse(raw) : null;
+    if (saved && Array.isArray(saved.orders) && saved.orders.length && String(saved.owner || "").toLowerCase() === String(email || "").toLowerCase()) {
+      state.orders = saved.orders;
+      return;
+    }
+  } catch (err) {}
+  state.orders = DEFAULTS().orders;
+}
+restoreCustomerFor(state.user.email);
 let navStack = [{ id: "login" }];
 let navLock = false;
 let toastTimer = null;
@@ -272,6 +291,7 @@ function afterNav(fromId, id) {
   if (id === "search") { renderSearchIdle(); $("#search-input").value = ""; setTimeout(() => $("#search-input").focus(), 380); }
   if (id === "chat") renderChat();
   if (window.KDRunner && window.KDRunner.onNav) window.KDRunner.onNav(id);
+  saveCustomer();
 }
 
 function openSheet(html) {
@@ -608,9 +628,24 @@ function pushChat(msg, mode = "courier") {
   return arr;
 }
 
+function courierChatOrder() {
+  const o = orderById(state.watchOrderId) || activeOngoing();
+  return o && o.runnerManaged ? o : null;
+}
+function pushCustomerChat(orderId, text, ts) {
+  const o = orderById(orderId);
+  if (!o || !o.runnerManaged || !text) return;
+  o.runnerChat = o.runnerChat || [];
+  o.runnerChat.push({ from: "them", text, time: fmtT(new Date(ts || Date.now())) });
+  const openForOrder = state.watchOrderId === orderId || (!state.watchOrderId && (activeOngoing() || {}).id === orderId);
+  if (state.chatMode === "courier" && navStack[navStack.length - 1].id === "chat" && openForOrder) renderChat();
+  addNotif("chat", "New message from " + courierFor(o).name, text, { chat: true });
+  saveCustomer();
+}
 function renderChat() {
   const mode = state.chatMode || "courier";
-  const arr = mode === "support" ? state.supportMsgs : state.chat;
+  const managed = mode === "courier" ? courierChatOrder() : null;
+  const arr = mode === "support" ? state.supportMsgs : managed ? (managed.runnerChat = managed.runnerChat || []) : state.chat;
   const cc = courierFor(orderById(state.watchOrderId) || activeOngoing());
   $("#ch-name").textContent = mode === "support" ? "Knight Support" : cc.name;
   $("#ch-avatar").textContent = mode === "support" ? "KS" : cc.initials;
@@ -632,6 +667,15 @@ function sendChat(text) {
   text = text.trim();
   if (!text) return;
   const mode = state.chatMode || "courier";
+  const managed = mode === "courier" ? courierChatOrder() : null;
+  if (managed) {
+    managed.runnerChat = managed.runnerChat || [];
+    managed.runnerChat.push({ from: "me", text, time: fmtT(now()) });
+    if (window.KD && KD.customerMessage) KD.customerMessage(managed.id, text, Date.now());
+    renderChat();
+    saveCustomer();
+    return;
+  }
   pushChat({ from: "me", text, time: fmtT(now()) }, mode);
   renderChat();
   state.chatTyping = true;
@@ -730,6 +774,7 @@ function refreshAll() {
   if (cur === "requests") renderRequests();
   if (cur === "activity") renderActivity();
   if (cur === "tracking") renderTracking();
+  saveCustomer();
 }
 
 function feeEstimate() {
@@ -913,7 +958,7 @@ function openHelp() {
 }
 
 function signOutConfirm() {
-  openSheet('<h2>Sign out?</h2><p class="sub">You will return to the login screen. Demo data resets.</p>' +
+  openSheet('<h2>Sign out?</h2><p class="sub">You will return to the login screen.</p>' +
     '<div class="sheetactions"><button class="btn ghost-danger" id="so-yes">Sign out</button>' +
     '<button class="btn btn-ghost btn-sm" id="so-no">Cancel</button></div>');
 }
@@ -951,6 +996,7 @@ function doLogin() {
     state.role = "customer";
     state.loggedIn = true;
     state.user.email = email;
+    restoreCustomerFor(email);
     navStack = [{ id: "home" }];
     setScreen("home", "fwd");
     afterNav(null, "home");
@@ -986,6 +1032,7 @@ function doSignup() {
     state.user.first = firstWord(name);
     state.user.email = email;
     state.user.sid = sid;
+    state.orders = DEFAULTS().orders;
     state.role = "customer";
     state.loggedIn = true;
     navStack = [{ id: "home" }];
@@ -1412,6 +1459,7 @@ window.KD = {
   get navStack() { return navStack; },
   orderById, courierFor, go, back, toast, openSheet, closeSheet, addNotif, refreshAll,
   renderHome, renderRequests, renderTracking, renderProfile, confetti, doSignOut, activeOngoing,
+  pushCustomerChat, saveCustomer,
   CATS, COURIER, STAGE_STATUS, esc, money, fmtT, fmtDT, initials, firstWord,
 };
 
