@@ -132,11 +132,11 @@ body.dark .runnernav{background:linear-gradient(150deg,#2A2560,#141134)}
 .r-ac-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .r-activecard h2{font-family:var(--font-display);font-size:20px;margin-top:12px}
 .r-activecard .r-acid{font-size:11.5px;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.5px;margin-top:2px}
-.r-ac-route{margin-top:16px;display:flex;flex-direction:column;gap:0}
-.r-ac-route .r-rrow{padding-bottom:15px}
-.r-ac-route .r-rtext small{color:rgba(255,255,255,.55)}
-.r-ac-route .r-rtext b{color:#fff}
-.r-ac-route .r-rline{background:repeating-linear-gradient(180deg,rgba(255,255,255,.32) 0 4px,transparent 4px 8px);left:5px}
+.r-ac-route,.r-activecard .r-route{margin-top:16px;display:flex;flex-direction:column;gap:0}
+.r-ac-route .r-rrow,.r-activecard .r-route .r-rrow{padding-bottom:15px}
+.r-ac-route .r-rtext small,.r-activecard .r-route .r-rtext small{color:rgba(255,255,255,.55)}
+.r-ac-route .r-rtext b,.r-activecard .r-route .r-rtext b{color:#fff}
+.r-ac-route .r-rline,.r-activecard .r-route .r-rline{background:repeating-linear-gradient(180deg,rgba(255,255,255,.32) 0 4px,transparent 4px 8px);left:5px}
 .r-progress{margin-top:16px}
 .r-ptrack{height:8px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}
 .r-pfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--yellow),#FFE68A);transition:width .5s ease}
